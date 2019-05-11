@@ -5,7 +5,7 @@ from __future__ import unicode_literals
 THEME = 'elegant'
 AUTHOR = 'John Liu'
 SITENAME = 'John Engineering Stuff'
-SITEURL = ''
+SITEURL = 'http://localhost:8000'  # Dev settings
 
 PATH = 'content'
 
@@ -27,8 +27,8 @@ LINKS = (('Pelican', 'http://getpelican.com/'),
          ('You can modify those links in your config file', '#'),)
 
 # Social widget
-SOCIAL = (('You can add links in your config file', '#'),
-          ('Another social link', '#'),)
+SOCIAL = (('Github', 'https://github.com/johnliu55tw'),
+          ('LinkedIn', 'https://www.linkedin.com/in/johnliu55tw/'),)
 
 DEFAULT_PAGINATION = 10
 
