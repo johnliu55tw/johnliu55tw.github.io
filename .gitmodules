@@ -1,0 +1,3 @@
+[submodule "themes/elegant"]
+	path = themes/elegant
+	url = git@github.com:johnliu55tw/elegant.git
