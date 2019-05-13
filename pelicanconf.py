@@ -1,11 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- #
 from __future__ import unicode_literals
+import sys
+
+# For plugins
+sys.path.append('./plugins/')
+PLUGINS = ['cjk_auto_spacing', 'cjk_remove_newline']
 
 THEME = 'elegant'
 AUTHOR = 'John Liu'
 SITENAME = 'John Engineering Stuff'
 SITEURL = 'http://localhost:8000'  # Dev settings
+
+SLUGIFY_SOURCE = 'basename'
 
 PATH = 'content'
 
