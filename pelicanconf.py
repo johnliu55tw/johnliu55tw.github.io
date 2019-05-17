@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*- #
 from __future__ import unicode_literals
 
+PLUGIN_PATHS = ['./plugins']
+PLUGINS = ['pelican_cjk']
 
 THEME = 'themes/elegant'
 AUTHOR = 'John Liu'
