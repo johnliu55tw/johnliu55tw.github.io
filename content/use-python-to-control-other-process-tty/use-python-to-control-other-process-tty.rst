@@ -132,6 +132,98 @@ Pseudo Terminal建立了兩個虛擬字元裝置，分別稱為master與slave，
 
 大概了解了Pseudo Terminal，接下來看看Python怎麼做這件事。
 
+The pty module
+**************
+
+一句話解釋完pty模組：
+
+   starting another process and being able to write to and read from its
+   controlling terminal programmatically.
+
+Bingo，這聽起來就是我想要的啊！其中我們會需要用到 ``pty.fork`` 這個函式：
+
+   ``pty.fork()`` ：Fork一個子行程，
+   並讓該子行程的控制終端接上一個Pseudo Terminal的slave端。
+   父行程會得到該Pseudo Terminal的master端，以一個file descriptor表示。
+   這個函式的回傳值是個tuple：(pid, fd)，子行程得到的pid會是0，
+   而父行程會得到一個非0的值，為子行程的pid。
+
+換句話說，我們可以啟動一個子行程，並使用父行程來控制該子行程的終端裝置，
+也就是/dev/tty。在實做之前，先來測試一下 ``pty.fork()`` ：
+
+.. code-block:: python
+   :linenos: table
+
+   import pty
+   import time
+   import os
+   import sys
+
+
+   pid, fd = pty.fork()
+   if pid == 0:
+       # Child process
+       while True:
+           try:
+               sys.stdout.write('Hello World!\n')
+               time.sleep(100)
+           except KeyboardInterrupt:
+               sys.stdout.write('SIGINT Received!\n')
+               sys.exit(1)
+   else:
+       print('Parent wait for 1 sec then write 0x03...')
+       time.sleep(1)
+       print('Parent write 0x03')
+       os.write(fd, b'\x03')
+       # Read until EOF or Input/Output Error
+       data = b''
+       while True:
+           try:
+               buf = os.read(fd, 1024)
+           except OSError:
+               break
+           else:
+               if buf != b'':
+                   data += buf
+               else:
+                   break
+       print('Parent read from pty fd: {}'.format(repr(data)))
+       print('Parent wait for child process {!r} to exit...'.format(pid))
+       pid, status = os.waitpid(pid, 0)
+       print('Parent exit')
+
+執行以上程式碼後應該會出現以下結果(Ubuntu 16.04 with Python 3.5)：
+
+.. code-block:: bash
+
+   $ python3.5 pty_fork_test.py
+   Parent wait for 1 sec then write 0x03...
+   Parent write 0x03
+   Parent read from pty fd: b'Hello World!\r\n^CSIGINT Received!\r\n'
+   Parent wait for child process 17676 to exit...
+   Parent exit
+
+這段程式碼展示了父行程如何使用 ``pty.fork()``
+回傳的file descriptor與子行程溝通的過程：
+
+1. 子行程的stdout連接到slave端，
+   因此子行程對stdout寫入的內容可以被父行程透過讀取master端，
+   也就是 ``pty.fork()`` 回傳的file descriptor，來接收。
+   因此，父行程能夠讀取到子行程對stdout寫入的 ``Hello World!\n`` 字串。
+
+2. 子行程寫入的 ``Hello World\n`` 到了父行程變成了 ``Hello World\r\n`` ，
+   多了一個 *Carriage Return* ``\r`` 字元，
+   這是Line discipline正在作用的結果。這證明了中間並不是只有單純的資料交換，
+   而是Linux的TTY系統在作動中。
+
+3. 父行程對file descriptor寫入數值 ``0x03`` 後，
+   到了子行程變成了SIGINT信號而被Python捕捉為 ``KeyboardInterrupt`` 例外，
+   接著子行程對stdout寫入 ``SIGINT Received!\n`` 字串，
+   然後被父行程讀取並顯示為 ``^CSIGINT Received!\r\n`` 。
+   這也證明了Line discipline以及TTY系統的作用。
+
+以上是對 ``pty.fork()`` 做的簡單測試。接下來來實做啦！
+
 .. _ReSpeaker: https://www.seeedstudio.com/ReSpeaker-Core-Based-On-MT7688-and-OpenWRT-p-2716.html
 .. _Line discipline: https://en.wikipedia.org/wiki/Line_discipline
 .. _pty: https://docs.python.org/3/library/pty.html
