@@ -123,6 +123,7 @@ Pseudo Terminal建立了兩個虛擬字元裝置，分別稱為master與slave，
 借 `The TTY demystified`_ 這篇文章中的圖來說明：
 
 .. image:: {static}images/how-xterm-works.png
+   :alt: How xterm works
 
 換句話說，就是 **串列埠接頭變成了一個file descriptor** 。於是呢，
 像xterm之類的終端模擬器（Terminal Emulator）
@@ -223,6 +224,216 @@ Bingo，這聽起來就是我想要的啊！其中我們會需要用到 ``pty.fo
    這也證明了Line discipline以及TTY系統的作用。
 
 以上是對 ``pty.fork()`` 做的簡單測試。接下來來實做啦！
+
+The MP3 player powered by madplay
+*********************************
+
+針對「使用Python + madplay 控制MP3檔案的播放」這件事，可以這樣做：
+
+1. 使用 ``pty.fork()`` Fork出一個子行程，讓該子行程使用Python的 ``os.exec*``
+   系列函式來啟動madplay 取代目前行程，並播放一個MP3檔案。
+
+2. 父行程利用 ``pty.fork()`` 取得的file descriptor來控制子行程的終端裝置，
+   進而控制madplay。
+
+3. 沒事得清清file descriptor的receive buffer，
+   避免讓子行程持續寫入而塞爆buffer（這是我自己想的，實際上可能不用，
+   但買個保險嘛）。
+
+4. 子行程的madplay播放完畢後必須通知父行程，
+   這時父行程必須使用 ``os.wait`` 或 ``os.waitpid`` 來收拾子行程，
+   否則會產生彊屍行程。
+
+不囉嗦，直接上code：
+
+.. code-block:: python
+   :linenos: table
+
+   import logging
+   import select
+   import signal
+   import pty
+   import os
+
+
+   logger = logging.getLogger(__name__)
+
+
+   class Error(Exception):
+       """Base error"""
+
+
+   class ReadTimeout(Error):
+       """Polling timeout"""
+
+
+   class PlayerState(object):
+       """The state of the player"""
+       PLAY = 'play'
+       PAUSE = 'pause'
+       STOP = 'stop'
+
+
+   class Mp3FilePlayer(object):
+
+       def __init__(self, file_path):
+           self.file_path = file_path
+           self.player_state = PlayerState.STOP
+           self.child_tty_fd = None
+           self.child_pid = None
+           self.poller = select.poll()
+
+       def _start_play(self):
+           """This method forks a child process and start exec 'madplay' to play
+               the mp3 file. Since 'madplay' can ONLY be controlled by tty, we have
+               to use pty.fork and use the return fd in the parent process (which
+               connects the child's controlling terminal) to control the playback.
+           """
+           # Register SIGCHLD to get notified when the child process terminated
+           signal.signal(signal.SIGCHLD, self._sigchld_handler)
+
+           pid, fd = pty.fork()
+           if pid == 0:
+               # Child process. Exec madplay
+               os.execl('/usr/bin/madplay', '--tty-control', self.file_path)
+           else:
+               # Parent process
+               self.child_tty_fd = fd
+               logger.debug('Forked child TTY fd: {}'.format(self.child_tty_fd))
+               self.child_pid = pid
+               logger.debug('Forked child PID: {}'.format(self.child_pid))
+               self._clear_tty()
+
+       def _read_tty(self, n, timeout=None):
+           """Read the TTY fd by n bytes or raise ReadTimeout if reached specified timeout.
+               The timeout value is in milliseconds.
+           """
+           self.poller.register(self.child_tty_fd, select.POLLIN)
+           events = self.poller.poll(timeout)
+           self.poller.unregister(self.child_tty_fd)  # Immediately after the polling
+           if not events:
+               raise ReadTimeout
+
+           assert len(events) == 1, 'Number of polled events != 1'
+
+           fd, event = events[0]
+           if event != select.POLLIN:
+               raise Error('Unexpected polled event: {}'.format(event))
+           else:
+               data = os.read(self.child_tty_fd, n)
+               return data
+
+       def _clear_tty(self):
+           """Clearing the TTY fd. Preventing the receiving buffer to overflow."""
+           while True:
+               # Keep reading until timeout, which means nothing more to read.
+               try:
+                   self._read_tty(1024, timeout=0)
+               except ReadTimeout:
+                   return
+
+       def _sigchld_handler(self, signum, frame):
+           """Handler function of SIGCHLD"""
+           logger.info('SIGCHLD signal received.')
+           self.stop()
+
+       def play(self):
+           """Start the playback or resume from pausing"""
+           if self.player_state == PlayerState.STOP:
+               self._start_play()
+               self.player_state = PlayerState.PLAY
+           elif self.player_state == PlayerState.PAUSE:
+               os.write(self.child_tty_fd, 'p')
+               self._clear_tty()
+               self.player_state = PlayerState.PLAY
+           else:
+               pass
+
+       def pause(self):
+           """Pause the playback"""
+           if self.player_state == PlayerState.PLAY:
+               os.write(self.child_tty_fd, 'p')
+               self._clear_tty()
+               self.player_state = PlayerState.PAUSE
+           else:
+               pass
+
+       def stop(self):
+           """Stop the playback. This will stop the child process."""
+           if self.player_state != PlayerState.STOP:
+               # Unregister the signal (set to SIG_DFL) to prevent recusively calling stop()
+               signal.signal(signal.SIGCHLD, signal.SIG_DFL)
+
+               logger.debug('Kill pid {}'.format(self.child_pid))
+               os.kill(self.child_pid, signal.SIGTERM)
+               logger.debug('Wait pid {}'.format(self.child_pid))
+               os.waitpid(self.child_pid, 0)
+               logger.debug('Child process {} died.'.format(self.child_pid))
+               self.player_state = PlayerState.STOP
+
+這段程式碼定義了類別 ``Mp3FilePlayer`` 來控制播放。以下是幾個重點：
+
+1. ``Mp3FilePlayer`` 定義了 ``play`` ， ``pause`` 及 ``stop``
+   這三個方法來控制MP3檔案的播放、暫停及停止。
+
+2. ``stop`` 方法會藉由送出SIGTERM信號來停掉子行程，並使用 ``waitpid()``
+   來收拾善後。
+
+3. 使用 ``select.poll()`` ，而非直接使用 ``os.read()``
+   直接讀取file descriptor。原因是我需要對讀取這件事設定timeout，
+   而 ``os.read()`` 這個函式無法做到。
+
+4. 設定 ``Mp3FilePlayer._sigchld_handler`` 方法當SIGCHLD信號的處理函式，
+   以便在madplay播放完MP3檔後，讓父行程呼叫 ``stop`` 方法來收拾子行程，
+   避免產生彊屍行程。
+
+``Mp3FilePlayer`` 可以這樣使用：
+
+.. code-block:: python
+
+   >>> from mp3_player import Mp3FilePlayer
+   >>> p = Mp3FilePlayer('/tmp/test.mp3')
+   >>> p.play()
+   # The music should be started. The play method return immediately.
+   >>> p.pause()
+   # The music should be paused now. The pause method also return
+   # immediately.
+   >>> p.play()
+   # The playback should be resumed from where it was paused.
+   >>> p.stop()
+   # The music should be stopped now.
+   >>> p.play()
+   # The music should be started from the beginning.
+
+Conclusion
+**********
+
+經過這幾天的研究總算稍微理解了TTY這東西，
+也理解了如何使用Python的pty模組來控制其他行程的終端。希望這篇文能幫助大家🎉
+
+References
+**********
+
+- `The TTY demystified`_
+
+- `What are the responsibilities of each Pseudo-Terminal (PTY) component
+  (software, master side, slave side)?
+  <https://unix.stackexchange.com/q/117981>`_
+
+- `一千零一夜之 Console I/O
+  <http://olvaffe.blogspot.tw/2009/01/console-io.html>`_
+
+- `Linux TTY Driver — Linux TTY 驅動程式
+  <http://zwai.pixnet.net/blog/post/24326951-linux-tty-driver---linux-tty-%E9%A9%85%E5%8B%95%E7%A8%8B%E5%BC%8F>`_
+
+- `What typing ^D really does on Unix
+  <https://utcc.utoronto.ca/~cks/space/blog/unix/TypingEOFEffects>`_
+
+- `Linux TTY framework(1)_基本概念
+  <http://www.wowotech.net/tty_framework/tty_concept.html>`_
+
+- `Linux TTY framework(3)_从应用的角度看TTY设备
+  <http://www.wowotech.net/tty_framework/application_view.html>`_
 
 .. _ReSpeaker: https://www.seeedstudio.com/ReSpeaker-Core-Based-On-MT7688-and-OpenWRT-p-2716.html
 .. _Line discipline: https://en.wikipedia.org/wiki/Line_discipline
