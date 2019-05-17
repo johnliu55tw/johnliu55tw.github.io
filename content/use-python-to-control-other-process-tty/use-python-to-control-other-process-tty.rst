@@ -122,6 +122,16 @@ Pseudo Terminal建立了兩個虛擬字元裝置，分別稱為master與slave，
 
 借 `The TTY demystified`_ 這篇文章中的圖來說明：
 
+.. image:: {static}images/how-xterm-works.png
+
+換句話說，就是 **串列埠接頭變成了一個file descriptor** 。於是呢，
+像xterm之類的終端模擬器（Terminal Emulator）
+就能夠以程式的方式去模擬一台古早年代終端機，
+將使用者使用終端機對串列埠寫入及讀取的行為模式，
+改為 **寫入及讀取這個file descriptor** ，在同一台機器上模擬終端的輸入及輸出。
+
+大概了解了Pseudo Terminal，接下來看看Python怎麼做這件事。
+
 .. _ReSpeaker: https://www.seeedstudio.com/ReSpeaker-Core-Based-On-MT7688-and-OpenWRT-p-2716.html
 .. _Line discipline: https://en.wikipedia.org/wiki/Line_discipline
 .. _pty: https://docs.python.org/3/library/pty.html
