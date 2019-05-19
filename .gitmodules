@@ -1,6 +1,6 @@
 [submodule "themes/elegant"]
 	path = themes/elegant
-	url = git@github.com:johnliu55tw/elegant.git
+	url = https://github.com/johnliu55tw/elegant.git
 [submodule "plugins/pelican_cjk"]
 	path = plugins/pelican_cjk
 	url = https://github.com/johnliu55tw/pelican-cjk.git
