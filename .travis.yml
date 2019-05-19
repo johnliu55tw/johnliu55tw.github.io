@@ -10,7 +10,9 @@ install:
 
 script:
   - make publish
+  # For GitHub page deploy
   - touch output/.nojekyll
+  - cp CNAME output/CNAME
 
 deploy:
   provider: pages
