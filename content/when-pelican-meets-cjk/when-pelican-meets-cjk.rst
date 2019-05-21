@@ -1,5 +1,5 @@
 用 Pelican 寫中文文章
-###################
+#####################
 
 :date: 2019-05-19
 :category: Python
@@ -14,7 +14,7 @@ Hmm，這樣的話應該先開個部落格寫寫文章吧？
 
 身為Python工程師及愛好者， `Pelican`_ 無非是最好的選擇：
 
-- 用Python寫的
+- 用Python寫的，可以用Python擴充功能
 - 支援reStructuredText及Markdown
 - 支援Disqus和Google Analytic等其他好用的服務
 - 支援許多主題： `Pelican Themes`_
@@ -84,13 +84,28 @@ Inline Markup的空格
 
 但每次都要手動加入這反斜線實在有點麻煩。如果這空格能自己消失，那就很舒服了。
 
+該怎麼處理這些事？
+******************
+
+之前提到Pelican支援Plugin系統能夠自己擴充功能，也有一個 `pelican-plugins`_
+收集所有的Plugin列表。搜尋了一下只有 `cjk-auto-spacing`_
+能夠自動調整中英文間的空格，但還是沒有解決我所有的問題。Google了一下似乎也沒有
+比較好的解法，這篇「 `解决 jekyll 中文换行变成空格的问题`_ 」有稍微提到，
+但他是用Jekyll而不是Pelican，不過解法也是一樣：
+
+既然找不到想要的，就自己寫一個吧！
+
 References
 **********
 
 - `vinta/pangu.js <https://github.com/vinta/pangu.js>`_
 
-- `解决 jekyll 中文换行变成空格的问题
-  <http://blog.guorongfei.com/2015/04/25/how-to-fix-the-markdown-newline-blank-problem/>`_
+- `解决 jekyll 中文换行变成空格的问题`_
+
+.. _解决 jekyll 中文换行变成空格的问题: jekyll_cjk_newline
 
 .. _Pelican: https://docs.getpelican.com/en/stable/
 .. _Pelican Themes: http://www.pelicanthemes.com/
+.. _pelican-plugins: https://github.com/getpelican/pelican-plugins
+.. _cjk-auto-spacing: https://github.com/yuex/cjk-auto-spacing
+.. _jekyll_cjk_newline: http://blog.guorongfei.com/2015/04/25/how-to-fix-the-markdown-newline-blank-problem/
