@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>John Engineering Stuff</title><link href="https://johnliu55.tw/" rel="alternate"></link><link href="https://johnliu55.tw/feeds/all.atom.xml" rel="self"></link><id>https://johnliu55.tw/</id><updated>2019-05-25T00:00:00+08:00</updated><entry><title>用 Pelican 寫中文文章</title><link href="https://johnliu55.tw/when-pelican-meets-cjk.html" rel="alternate"></link><published>2019-05-25T00:00:00+08:00</published><updated>2019-05-25T00:00:00+08:00</updated><author><name>John Liu</name></author><id>tag:johnliu55.tw,2019-05-25:/when-pelican-meets-cjk.html</id><summary type="html">&lt;p&gt;想寫 Blog 很久了，一直覺得該找個地方記錄一下腦子裡的想法，不然我記性超級差，隔天就忘了自己到底在忙什麼。&lt;/p&gt;
-&lt;p&gt;那要用什麼寫？&lt;/p&gt;
-&lt;p&gt;一般的 Blog 服務當然是不考慮，對&lt;strong&gt;時常要放程式碼&lt;/strong&gt;的人來說完全不適合。&lt;/p&gt;
-&lt;p&gt;在很潮的 Medium 上寫過一篇文章，沒有原生支援 Code Syntax Highlighting
-讓人非常消火，每次都得用 GitHub Gist 放程式碼實在有點麻煩。而且用 Vim + Markup Language 寫文件寫習慣了，對必須用滑鼠改格式這件事覺得不太順手。&lt;/p&gt;
-&lt;p&gt;Google 了一下，身為 Python 工程師及愛好者，用 &lt;a class="reference external" href="https://docs.getpelican.com/en/stable/"&gt;Pelican&lt;/a&gt; 寫然後架在 GitHub Pages
-上似乎是最好的選擇：&lt;/p&gt;
-&lt;ul class="simple"&gt;
-&lt;li&gt;用 Python 寫的，可以用 Python 擴充和修改功能&lt;/li&gt;
-&lt;li&gt;支援 reStructuredText …&lt;/li&gt;&lt;/ul&gt;</summary><content type="html">&lt;p&gt;想寫 Blog 很久了，一直覺得該找個地方記錄一下腦子裡的想法，不然我記性超級差，隔天就忘了自己到底在忙什麼。&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>John Engineering Stuff</title><link href="https://johnliu55.tw/" rel="alternate"></link><link href="https://johnliu55.tw/feeds/all.atom.xml" rel="self"></link><id>https://johnliu55.tw/</id><updated>2019-05-25T00:00:00+08:00</updated><entry><title>用 Pelican 寫中文文章</title><link href="https://johnliu55.tw/when-pelican-meets-cjk.html" rel="alternate"></link><published>2019-05-25T00:00:00+08:00</published><updated>2019-05-25T00:00:00+08:00</updated><author><name>John Liu</name></author><id>tag:johnliu55.tw,2019-05-25:/when-pelican-meets-cjk.html</id><summary type="html">&lt;p class="first last"&gt;用Pelican與reStructuredText寫中文文章遇到了空白、換行等等格式問題，
+所以自己寫了一個Pelican Plugin來解決這些問題。&lt;/p&gt;
+</summary><content type="html">&lt;p&gt;想寫 Blog 很久了，一直覺得該找個地方記錄一下腦子裡的想法，不然我記性超級差，隔天就忘了自己到底在忙什麼。&lt;/p&gt;
 &lt;p&gt;那要用什麼寫？&lt;/p&gt;
 &lt;p&gt;一般的 Blog 服務當然是不考慮，對&lt;strong&gt;時常要放程式碼&lt;/strong&gt;的人來說完全不適合。&lt;/p&gt;
 &lt;p&gt;在很潮的 Medium 上寫過一篇文章，沒有原生支援 Code Syntax Highlighting
@@ -142,17 +135,11 @@ Regular Expression 來達成：&lt;/p&gt;
 &lt;li&gt;&lt;a class="reference external" href="jekyll_cjk_newline"&gt;解决 jekyll 中文换行变成空格的问题&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
-</content><category term="Python"></category><category term="Pelican"></category></entry><entry><title>用 Python 控制其他行程的 TTY 終端裝置</title><link href="https://johnliu55.tw/use-python-to-control-other-process-tty.html" rel="alternate"></link><published>2018-04-11T00:00:00+08:00</published><updated>2018-04-11T00:00:00+08:00</updated><author><name>John Liu</name></author><id>tag:johnliu55.tw,2018-04-11:/use-python-to-control-other-process-tty.html</id><summary type="html">&lt;div class="section" id="foreword"&gt;
-&lt;h2&gt;Foreword&lt;/h2&gt;
-&lt;p&gt;這篇文章會稍微解釋 Unix 的 TTY 系統以及 Pseudo Terminal 的概念，接著討論如何使用 Python 的 &lt;tt class="docutils literal"&gt;pty&lt;/tt&gt; 模組中的 &lt;tt class="docutils literal"&gt;pty.fork()&lt;/tt&gt;
-來建立並控制子行程的 TTY 系統，最後用 Python 來實作控制 &lt;em&gt;madplay&lt;/em&gt; 這個 CLI MP3 Player。&lt;/p&gt;
-&lt;p&gt;有問題歡迎大家詢問，有任何錯誤也請大家幫忙指正 :D&lt;/p&gt;
-&lt;/div&gt;
-&lt;hr class="docutils" /&gt;
-&lt;div class="section" id="python-mp3-player"&gt;
-&lt;h2&gt;Python MP3 Player&lt;/h2&gt;
-&lt;p&gt;這幾天在玩 &lt;a class="reference external" href="https://www.seeedstudio.com/ReSpeaker-Core-Based-On-MT7688-and-OpenWRT-p-2716.html"&gt;ReSpeaker&lt;/a&gt; （一個基於 MT7688 的聲控裝置開發板）遇到了個問題：在 ReSpeaker 中要如何使用 Python 播放 MP3 檔案？&lt;/p&gt;
-&lt;p&gt;好在 ReSpeaker 上已有 &lt;em&gt;madplay …&lt;/em&gt;&lt;/p&gt;&lt;/div&gt;</summary><content type="html">&lt;div class="section" id="foreword"&gt;
+</content><category term="Python"></category><category term="Pelican"></category></entry><entry><title>用 Python 控制其他行程的 TTY 終端裝置</title><link href="https://johnliu55.tw/use-python-to-control-other-process-tty.html" rel="alternate"></link><published>2018-04-11T00:00:00+08:00</published><updated>2018-04-11T00:00:00+08:00</updated><author><name>John Liu</name></author><id>tag:johnliu55.tw,2018-04-11:/use-python-to-control-other-process-tty.html</id><summary type="html">&lt;p class="first last"&gt;這篇文章會稍微解釋Unix的TTY系統以及Pseudo Terminal的概念，
+接著討論如何使用Python的 &lt;tt class="docutils literal"&gt;pty&lt;/tt&gt; 模組中的 &lt;tt class="docutils literal"&gt;pty.fork()&lt;/tt&gt;
+來建立並控制子行程的TTY系統，
+最後用Python來實作控制 &lt;em&gt;madplay&lt;/em&gt; 這個CLI MP3 Player。&lt;/p&gt;
+</summary><content type="html">&lt;div class="section" id="foreword"&gt;
 &lt;h2&gt;Foreword&lt;/h2&gt;
 &lt;p&gt;這篇文章會稍微解釋 Unix 的 TTY 系統以及 Pseudo Terminal 的概念，接著討論如何使用 Python 的 &lt;tt class="docutils literal"&gt;pty&lt;/tt&gt; 模組中的 &lt;tt class="docutils literal"&gt;pty.fork()&lt;/tt&gt;
 來建立並控制子行程的 TTY 系統，最後用 Python 來實作控制 &lt;em&gt;madplay&lt;/em&gt; 這個 CLI MP3 Player。&lt;/p&gt;
