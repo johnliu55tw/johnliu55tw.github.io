@@ -5,6 +5,8 @@
 :date: 2019-05-25
 :category: Python
 :tags: Python, Pelican
+:summary: 用Pelican與reStructuredText寫中文文章遇到了空白、換行等等格式問題，
+          所以自己寫了一個Pelican Plugin來解決這些問題。
 
 想寫Blog很久了，一直覺得該找個地方記錄一下腦子裡的想法，不然我記性超級差，
 隔天就忘了自己到底在忙什麼。
