@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="John Liu" />
+
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content="Python, Pelican, Python, " />
+
+<meta property="og:title" content="用 Pelican 寫中文文章 "/>
+<meta property="og:url" content="https://johnliu55.tw/when-pelican-meets-cjk.html" />
+<meta property="og:description" content="想寫 Blog 很久了，一直覺得該找個地方記錄一下腦子裡的想法，不然我記性超級差，隔天就忘了自己到底在忙什麼。 那要用什麼寫？ 一般的 Blog 服務當然是不考慮，對時常要放程式碼的人來說完全不適合。 在很潮的 Medium 上寫過一篇文章，沒有原生支援 Code Syntax Highlighting 讓人非常消火，每次都得用 GitHub Gist 放程式碼實在有點麻煩。而且用 Vim + Markup Language 寫文件寫習慣了，對必須用滑鼠改格式這件事覺得不太順手。 Google 了一下，身為 Python 工程師及愛好者，用 Pelican 寫然後架在 GitHub Pages 上似乎是最好的選擇： 用 Python 寫的，可以用 Python 擴充和修改功能 支援 reStructuredText …" />
+<meta property="og:site_name" content="John Engineering Stuff" />
+<meta property="og:article:author" content="John Liu" />
+<meta property="og:article:published_time" content="2019-05-19T00:00:00+08:00" />
+<meta name="twitter:title" content="用 Pelican 寫中文文章 ">
+<meta name="twitter:description" content="想寫 Blog 很久了，一直覺得該找個地方記錄一下腦子裡的想法，不然我記性超級差，隔天就忘了自己到底在忙什麼。 那要用什麼寫？ 一般的 Blog 服務當然是不考慮，對時常要放程式碼的人來說完全不適合。 在很潮的 Medium 上寫過一篇文章，沒有原生支援 Code Syntax Highlighting 讓人非常消火，每次都得用 GitHub Gist 放程式碼實在有點麻煩。而且用 Vim + Markup Language 寫文件寫習慣了，對必須用滑鼠改格式這件事覺得不太順手。 Google 了一下，身為 Python 工程師及愛好者，用 Pelican 寫然後架在 GitHub Pages 上似乎是最好的選擇： 用 Python 寫的，可以用 Python 擴充和修改功能 支援 reStructuredText …">
+
+        <title>用 Pelican 寫中文文章  · John Engineering Stuff
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/css/admonition.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/css/custom.css" media="screen">
+        <link href="https://johnliu55.tw/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="John Engineering Stuff - Full Atom Feed" />
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-140381969-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+
+
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="https://johnliu55.tw/"><span class=site-name>John Engineering Stuff</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href="https://johnliu55.tw">Home</a></li>
+                            <li ><a href="https://johnliu55.tw/pages/about.html">About</a></li>
+                            <li ><a href="https://johnliu55.tw/categories">Categories</a></li>
+                            <li ><a href="https://johnliu55.tw/tags">Tags</a></li>
+                            <li ><a href="https://johnliu55.tw/archives">Archives</a></li>
+                            <li><form class="navbar-search" action="https://johnliu55.tw/search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article itemscope>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="https://johnliu55.tw/when-pelican-meets-cjk.html"> 用 Pelican 寫中文文章  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p>想寫 Blog 很久了，一直覺得該找個地方記錄一下腦子裡的想法，不然我記性超級差，隔天就忘了自己到底在忙什麼。</p>
+<p>那要用什麼寫？</p>
+<p>一般的 Blog 服務當然是不考慮，對<strong>時常要放程式碼</strong>的人來說完全不適合。</p>
+<p>在很潮的 Medium 上寫過一篇文章，沒有原生支援 Code Syntax Highlighting
+讓人非常消火，每次都得用 GitHub Gist 放程式碼實在有點麻煩。而且用 Vim + Markup Language 寫文件寫習慣了，對必須用滑鼠改格式這件事覺得不太順手。</p>
+<p>Google 了一下，身為 Python 工程師及愛好者，用 <a class="reference external" href="https://docs.getpelican.com/en/stable/">Pelican</a> 寫然後架在 GitHub Pages
+上似乎是最好的選擇：</p>
+<ul class="simple">
+<li>用 Python 寫的，可以用 Python 擴充和修改功能</li>
+<li>支援 reStructuredText 及 Markdown</li>
+<li>支援 Disqus 和 Google Analytic 等其他好用的服務</li>
+<li>支援許多主題： <a class="reference external" href="http://www.pelicanthemes.com/">Pelican Themes</a></li>
+</ul>
+<p>讚，那就開始寫吧！</p>
+<hr class="docutils" />
+<div class="section" id="id1">
+<h2>當 Pelican 遇上中文</h2>
+<p>平常文件都是用英文在寫，當開始用 reStructuredText 寫起中文立刻覺得不太對勁…好像出現了很多不該出現的空格？</p>
+<div class="figure">
+<img alt=" 詭異的空格們 " src="https://johnliu55.tw/when-pelican-meets-cjk/images/weird-spaces.png" />
+<p class="caption">詭異的空格們</p>
+</div>
+<div class="section" id="id2">
+<h3>換行變成了空格</h3>
+<p>我是龜毛人，原始碼的行數不超過 80 個字元是基本，最多也不能超過 100，所以很長的一個段落會用多行表示：</p>
+<div class="highlight"><pre><span></span><span class="err">我是龜毛人，原始碼的行數不超過</span><span class="mi">80</span><span class="err">個字元是基本，最多也不能超過</span><span class="mi">100</span><span class="err">，</span>
+<span class="err">所以很長的一個段落會用多行表示：</span>
+</pre></div>
+<p>reStructuredText 和 Markdown 都會保留這個換行字元到轉換後的 HTML 中：</p>
+<div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="err">我是龜毛人，原始碼的行數不超過</span><span class="mi">80</span><span class="err">個字元是基本，最多也不能超過</span><span class="mi">100</span><span class="err">，</span>
+<span class="err">所以很長的一個段落會用多行表示：</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>
+<p>而瀏覽器在遇到這樣的換行字元時會將他轉換為空格，因為
+<a class="reference external" href="https://www.w3.org/MarkUp/html-spec/html-spec_4.html#SEC4.2.2">Spec</a>
+就是這樣規定：</p>
+<blockquote>
+An HTML user agent should treat end of line in any of its variations as
+a word space in all contexts except preformatted text.</blockquote>
+<p>這件事在英文很合理，但到了中文就不合理了，<strong>因為我們不會用空格把文字隔開</strong>。於是乎，上面的例子瀏覽器會顯示為：</p>
+<blockquote>
+我是龜毛人，原始檔的行數不超過 80 個字元是基本，100 則是最大值， 所以很長的一個段落會用多行表示：</blockquote>
+<p>注意到「所以」前面多了一個空格。如果你習慣很好，只有在使用標點符號之後才會換行，那看起來影響不大。但如果換行是介於兩個中文字之間，那就會 像這樣在文字間出現詭異的空格。</p>
+</div>
+<div class="section" id="inline-markup">
+<h3>Inline Markup 的空格</h3>
+<p>不像 Markdown，reStructuredText 要求<strong>必須用空格</strong>
+（<a class="reference external" href="http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#inline-markup-recognition-rules">或其他類似功能的字元</a>）將 Inline Markup
+與其他的文字區隔開來：</p>
+<div class="highlight"><pre><span></span>This is **inline markup** bold.
+</pre></div>
+<p>這樣的空格會被保留到 HTML：</p>
+<div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>This is <span class="p">&lt;</span><span class="nt">strong</span><span class="p">&gt;</span>inline markup<span class="p">&lt;/</span><span class="nt">strong</span><span class="p">&gt;</span> bold.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</pre></div>
+<p>跟上面提到的一樣，這空格在英文沒差，中文就不行了。不過江湖在走，Workaround 要有，最簡單的方法是自己用 <tt class="docutils literal">\</tt> 來「跳脫」這個空格：</p>
+<div class="highlight"><pre><span></span>This is\ **inline markup**\ bold.
+</pre></div>
+<p>但每次都要手動加入這反斜線實在有點麻煩。如果這空格能自己消失，那該有多好。</p>
+</div>
+<div class="section" id="bonus">
+<h3>Bonus：中英文間的空格</h3>
+<blockquote>
+有研究顯示，打字的時候不喜歡在中文和英文之間加空格的人，感情路都走得很辛苦，有七成的比例會在 34 歲的時候跟自己不愛的人結婚，而其餘三成的人最後只能把遺產留給自己的貓。畢竟愛情跟書寫都需要適時地留白。
+—— <a class="reference external" href="https://github.com/vinta/pangu.js">vinta/pangu.js</a></blockquote>
+<p>…這種空格我個人是覺得還可以接受啦，不過如果 Pelican 能自動幫我加上這些空格，那我就不用擔心未來會跟不愛的人結婚了。寫程式真是份偉大的工作。</p>
+</div>
+</div>
+<div class="section" id="pelican-plugin">
+<h2>寫個 Pelican Plugin 吧！</h2>
+<p>原本想說可以從處理 reStructuredText 的函式庫 <a class="reference external" href="http://docutils.sourceforge.net/">docutils</a> 下手，無奈功力不夠高深，看不出來到底該怎麼修改他的行為，只好從 Pelican 下手。</p>
+<p>之前提到 Pelican 能夠用 Python 自己擴充功能，而在官方的 <a class="reference external" href="https://github.com/getpelican/pelican-plugins">pelican-plugins</a>
+列表中搜尋了一下只有 <a class="reference external" href="https://github.com/yuex/cjk-auto-spacing">cjk-auto-spacing</a> 能夠自動調整中英文間的空格，但還是沒有解決所有的問題。Google 了一下找到這篇「<a class="reference external" href="jekyll_cjk_newline">解决 jekyll 中文换行变成空格的问题</a>」，但他是用
+<a class="reference external" href="https://jekyllrb.com/">Jekyll</a> 而不是 Pelican。安捏…不如自己寫一個吧！</p>
+<div class="section" id="id4">
+<h3>Pelican Plugin 的運作方式</h3>
+<blockquote>
+Pelican 定義了各種「<strong>信號</strong>」（Signal），代表了從原始碼到最後生出 HTML 的各個<strong>階段</strong>。你可以將自己寫的 Python 函式<strong>註冊</strong>到這些信號上，Pelican 就會在那些<strong>信號對應的階段發生時</strong>呼叫你的函式，並將當下的狀態或處理的物件傳進這個函式，讓你的函式能夠調整 Pelican 的行為。細節和信號列表請參考 <a class="reference external" href="https://docs.getpelican.com/en/stable/plugins.html">Pelican Plugin Document</a> 。</blockquote>
+<p>前面提到了 <a class="reference external" href="https://github.com/yuex/cjk-auto-spacing">cjk-auto-spacing</a> ，理所當然拿他來參考一下。它處理的方式是使用信號
+<em>content_object_init</em> 來取得 <tt class="docutils literal">content_object</tt> 物件，而這個物件的 <tt class="docutils literal">_content</tt>
+屬性存放了從 reStructuredText 及 Markdown 原始碼轉換而來的 <strong>HTML</strong> ，以 <tt class="docutils literal">str</tt>
+儲存。我們可以根據需求來調整這個 HTML，調整完後再 assign 回 <tt class="docutils literal">_content</tt> ，Pelican 就會用這份新的 HTML 繼續之後的工作。</p>
+<p>舉例來說，如果我們想把 HTML 裡的所有 <tt class="docutils literal">&lt;p&gt;</tt> Tag 換成 <tt class="docutils literal">&lt;foo&gt;</tt> ，可以很快的用
+Regular Expression 來達成：</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">from</span> <span class="nn">pelican</span> <span class="kn">import</span> <span class="n">signals</span>
+
+
+<span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">content</span><span class="p">):</span>
+    <span class="n">new_content</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;&lt;(/)?p&gt;&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;&lt;\1foo&gt;&#39;</span><span class="p">,</span> <span class="n">content</span><span class="o">.</span><span class="n">_content</span><span class="p">)</span>
+    <span class="n">content</span><span class="o">.</span><span class="n">_content</span> <span class="o">=</span> <span class="n">new_content</span>
+
+
+<span class="k">def</span> <span class="nf">register</span><span class="p">():</span>
+    <span class="n">signals</span><span class="o">.</span><span class="n">content_object_init</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">process</span><span class="p">)</span>
+</pre></div>
+<p>Pelican 規定每個 Plugin 都必須要有 <tt class="docutils literal">register</tt> 函式，目的在指定你需要哪些信號以及他們要觸發的函式。</p>
+</div>
+</div>
+<div class="section" id="pelican-cjk">
+<h2>Pelican-CJK</h2>
+<p>花了些時間用 Regular Expression 刻了一個能夠自動處理以上問題的 Plugin：
+<a class="reference external" href="https://github.com/johnliu55tw/pelican-cjk">pelican-cjk</a> 。它能夠自動根據你寫的內容調整 HTML，解決上述那些小毛病。</p>
+<p>在開發這個 Plugin 的時候考慮了以下幾點：</p>
+<ul class="simple">
+<li>必須支援 reStructuredText 及 Markdown</li>
+<li>不想依賴其他第三方模組</li>
+</ul>
+<p>如果要從原始碼（ <tt class="docutils literal">.md</tt> 與 <tt class="docutils literal">.rst</tt> ）或 Parser 下手，就還得考慮 reStructuredText 和 Markdown 的差異，所以如果兩個都得支援，直接從 HTML 下手會好處理很多。</p>
+<p>而基於第二點，
+<a class="reference external" href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/">Beautiful Soup</a>
+等等能夠幫助處理 HTML 的模組也就不考慮了，而 Python 內建的
+<a class="reference external" href="https://docs.python.org/3/library/html.parser.html">HTML Parser</a> 又太陽春，所以最後我直接用 Regex 來處理。但這不免有些小問題：</p>
+<ul class="simple">
+<li>無法判斷目前要調整的文字屬於那種區塊。reStructuredText 和 Markdown 都有所謂的「Literal Block」，在這個區塊內是不會處理任何標記的。
+<strong>但因為程式無法根據 HTML 判斷區塊，它一樣會調整這個區塊內的文字。</strong>
+不過 Literal Block 通常是用來放範例程式碼的，比較不會出現中英混用的情況，所以就我認為影響不大。</li>
+<li>透過上述信號拿到的 HTML <strong>不包含文章的標題</strong>，所以標題無法調整，得自己加入中英文間的空格。這應該可以透過其他信號取得，但我還沒研究。</li>
+<li>為了簡單起見，我寫的 Regex 不會針對以下情況調整空格：<ul>
+<li>巢狀 Inline Markup：reStructuredText 不允許這種情況，也就是說 HTML 中不會出現
+<tt class="docutils literal"><span class="pre">English&lt;em&gt;&lt;strong&gt;斜體又粗體&lt;/strong&gt;&lt;/em&gt;</span></tt> 這樣的東西。但 Markdown 允許，所以這是有機會出現的。以這個例子來說，「English」與「斜體又粗體」間就不會自動加空格。</li>
+<li>連續 Inline Markup： <tt class="docutils literal"><span class="pre">&lt;em&gt;English&lt;/em&gt;&lt;strong&gt;很強&lt;/strong&gt;</span></tt>
+連續的兩個 Inline Markup 也需要額外判斷，而且使用情況也不多，所以在此也不考慮。</li>
+</ul>
+</li>
+</ul>
+<p>希望這個 Plugin 能夠幫助更多跟我一樣毛很多的人，如果大家有什麼更好的方法也歡迎一起討論。</p>
+</div>
+<div class="section" id="references">
+<h2>References</h2>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/vinta/pangu.js">vinta/pangu.js</a></li>
+<li><a class="reference external" href="jekyll_cjk_newline">解决 jekyll 中文换行变成空格的问题</a></li>
+</ul>
+</div>
+
+            <div>
+</div>
+
+            
+            <section>
+<div class="accordion" id="accordion2">
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle disqus-comment-count" data-toggle="collapse" data-parent="#accordion2"
+                href="https://johnliu55.tw/when-pelican-meets-cjk.html#disqus_thread",
+                id="disqus-accordion-toggle">
+                Comments
+            </a>
+        </div>
+        <div id="disqus_thread" class="accordion-body collapse">
+            <div class="accordion-inner">
+                <div class="comments">
+                    <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'johnliu55tw';
+        var disqus_identifier = 'https://johnliu55.tw/when-pelican-meets-cjk.html';
+    var disqus_url = 'https://johnliu55.tw/when-pelican-meets-cjk.html';
+
+    (function() {
+         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+         dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+     })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+            <hr/>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time itemprop="dateCreated" datetime="2019-05-19T00:00:00+08:00">May 19, 2019</time>
+            <h4>Category</h4>
+            <a class="category-link" href="https://johnliu55.tw/categories.html#python-ref">Python</a>
+            <h4>Tags</h4>
+            <ul class="list-of-tags tags-in-article">
+                <li><a href="https://johnliu55.tw/tags#pelican-ref">Pelican
+                    <span>1</span>
+</a></li>
+                <li><a href="https://johnliu55.tw/tags#python-ref">Python
+                    <span>2</span>
+</a></li>
+            </ul>
+<h4>Contact</h4>
+    <a href="https://github.com/johnliu55tw" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="https://www.linkedin.com/in/johnliu55tw/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="https://github.com/Pelican-Elegant/elegant/" title="Theme Elegant Home Page">Elegant</a></li>
+    </ul>
+</div>
+</footer>            <script src="//code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+            <script type="text/javascript">
+var disqus_shortname = 'johnliu55tw';
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+<script  language="javascript" type="text/javascript">
+function uncollapse() {
+    if (window.location.hash.match(/^#comment-\d+$/)) {
+        $('#disqus_thread').collapse('show');
+    }
+}
+</script>
+<script type="text/javascript" language="JavaScript">
+uncollapse();
+window.onhashchange=function(){
+    if (window.location.hash.match(/^#comment-\d+$/))
+        window.location.reload(true);
+}
+</script>
+<script>
+$('#disqus_thread').on('shown', function () {
+    var link = document.getElementById('disqus-accordion-toggle');
+    var old_innerHTML = link.innerHTML;
+    $(link).fadeOut(500, function() {
+        $(this).text('Click here to hide comments').fadeIn(500);
+    });
+    $('#disqus_thread').on('hidden', function () {
+        $(link).fadeOut(500, function() {
+            $(this).text(old_innerHTML).fadeIn(500);
+        });
+    })
+})
+</script>
+
+
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : MIT -->
+</html>

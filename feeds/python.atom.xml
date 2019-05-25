@@ -1,5 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>John Engineering Stuff - Python</title><link href="https://johnliu55.tw/" rel="alternate"></link><link href="https://johnliu55.tw/feeds/python.atom.xml" rel="self"></link><id>https://johnliu55.tw/</id><updated>2018-04-11T00:00:00+08:00</updated><entry><title>用 Python 控制其他行程的 TTY 終端裝置</title><link href="https://johnliu55.tw/use-python-to-control-other-process-tty.html" rel="alternate"></link><published>2018-04-11T00:00:00+08:00</published><updated>2018-04-11T00:00:00+08:00</updated><author><name>John Liu</name></author><id>tag:johnliu55.tw,2018-04-11:/use-python-to-control-other-process-tty.html</id><summary type="html">&lt;div class="section" id="foreword"&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>John Engineering Stuff - Python</title><link href="https://johnliu55.tw/" rel="alternate"></link><link href="https://johnliu55.tw/feeds/python.atom.xml" rel="self"></link><id>https://johnliu55.tw/</id><updated>2019-05-19T00:00:00+08:00</updated><entry><title>用 Pelican 寫中文文章</title><link href="https://johnliu55.tw/when-pelican-meets-cjk.html" rel="alternate"></link><published>2019-05-19T00:00:00+08:00</published><updated>2019-05-19T00:00:00+08:00</updated><author><name>John Liu</name></author><id>tag:johnliu55.tw,2019-05-19:/when-pelican-meets-cjk.html</id><summary type="html">&lt;p&gt;想寫 Blog 很久了，一直覺得該找個地方記錄一下腦子裡的想法，不然我記性超級差，隔天就忘了自己到底在忙什麼。&lt;/p&gt;
+&lt;p&gt;那要用什麼寫？&lt;/p&gt;
+&lt;p&gt;一般的 Blog 服務當然是不考慮，對&lt;strong&gt;時常要放程式碼&lt;/strong&gt;的人來說完全不適合。&lt;/p&gt;
+&lt;p&gt;在很潮的 Medium 上寫過一篇文章，沒有原生支援 Code Syntax Highlighting
+讓人非常消火，每次都得用 GitHub Gist 放程式碼實在有點麻煩。而且用 Vim + Markup Language 寫文件寫習慣了，對必須用滑鼠改格式這件事覺得不太順手。&lt;/p&gt;
+&lt;p&gt;Google 了一下，身為 Python 工程師及愛好者，用 &lt;a class="reference external" href="https://docs.getpelican.com/en/stable/"&gt;Pelican&lt;/a&gt; 寫然後架在 GitHub Pages
+上似乎是最好的選擇：&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;用 Python 寫的，可以用 Python 擴充和修改功能&lt;/li&gt;
+&lt;li&gt;支援 reStructuredText …&lt;/li&gt;&lt;/ul&gt;</summary><content type="html">&lt;p&gt;想寫 Blog 很久了，一直覺得該找個地方記錄一下腦子裡的想法，不然我記性超級差，隔天就忘了自己到底在忙什麼。&lt;/p&gt;
+&lt;p&gt;那要用什麼寫？&lt;/p&gt;
+&lt;p&gt;一般的 Blog 服務當然是不考慮，對&lt;strong&gt;時常要放程式碼&lt;/strong&gt;的人來說完全不適合。&lt;/p&gt;
+&lt;p&gt;在很潮的 Medium 上寫過一篇文章，沒有原生支援 Code Syntax Highlighting
+讓人非常消火，每次都得用 GitHub Gist 放程式碼實在有點麻煩。而且用 Vim + Markup Language 寫文件寫習慣了，對必須用滑鼠改格式這件事覺得不太順手。&lt;/p&gt;
+&lt;p&gt;Google 了一下，身為 Python 工程師及愛好者，用 &lt;a class="reference external" href="https://docs.getpelican.com/en/stable/"&gt;Pelican&lt;/a&gt; 寫然後架在 GitHub Pages
+上似乎是最好的選擇：&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;用 Python 寫的，可以用 Python 擴充和修改功能&lt;/li&gt;
+&lt;li&gt;支援 reStructuredText 及 Markdown&lt;/li&gt;
+&lt;li&gt;支援 Disqus 和 Google Analytic 等其他好用的服務&lt;/li&gt;
+&lt;li&gt;支援許多主題： &lt;a class="reference external" href="http://www.pelicanthemes.com/"&gt;Pelican Themes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;讚，那就開始寫吧！&lt;/p&gt;
+&lt;hr class="docutils" /&gt;
+&lt;div class="section" id="id1"&gt;
+&lt;h2&gt;當 Pelican 遇上中文&lt;/h2&gt;
+&lt;p&gt;平常文件都是用英文在寫，當開始用 reStructuredText 寫起中文立刻覺得不太對勁…好像出現了很多不該出現的空格？&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img alt=" 詭異的空格們 " src="https://johnliu55.tw/when-pelican-meets-cjk/images/weird-spaces.png" /&gt;
+&lt;p class="caption"&gt;詭異的空格們&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id2"&gt;
+&lt;h3&gt;換行變成了空格&lt;/h3&gt;
+&lt;p&gt;我是龜毛人，原始碼的行數不超過 80 個字元是基本，最多也不能超過 100，所以很長的一個段落會用多行表示：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="err"&gt;我是龜毛人，原始碼的行數不超過&lt;/span&gt;&lt;span class="mi"&gt;80&lt;/span&gt;&lt;span class="err"&gt;個字元是基本，最多也不能超過&lt;/span&gt;&lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="err"&gt;，&lt;/span&gt;
+&lt;span class="err"&gt;所以很長的一個段落會用多行表示：&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;reStructuredText 和 Markdown 都會保留這個換行字元到轉換後的 HTML 中：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;&lt;span class="err"&gt;我是龜毛人，原始碼的行數不超過&lt;/span&gt;&lt;span class="mi"&gt;80&lt;/span&gt;&lt;span class="err"&gt;個字元是基本，最多也不能超過&lt;/span&gt;&lt;span class="mi"&gt;100&lt;/span&gt;&lt;span class="err"&gt;，&lt;/span&gt;
+&lt;span class="err"&gt;所以很長的一個段落會用多行表示：&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;而瀏覽器在遇到這樣的換行字元時會將他轉換為空格，因為
+&lt;a class="reference external" href="https://www.w3.org/MarkUp/html-spec/html-spec_4.html#SEC4.2.2"&gt;Spec&lt;/a&gt;
+就是這樣規定：&lt;/p&gt;
+&lt;blockquote&gt;
+An HTML user agent should treat end of line in any of its variations as
+a word space in all contexts except preformatted text.&lt;/blockquote&gt;
+&lt;p&gt;這件事在英文很合理，但到了中文就不合理了，&lt;strong&gt;因為我們不會用空格把文字隔開&lt;/strong&gt;。於是乎，上面的例子瀏覽器會顯示為：&lt;/p&gt;
+&lt;blockquote&gt;
+我是龜毛人，原始檔的行數不超過 80 個字元是基本，100 則是最大值， 所以很長的一個段落會用多行表示：&lt;/blockquote&gt;
+&lt;p&gt;注意到「所以」前面多了一個空格。如果你習慣很好，只有在使用標點符號之後才會換行，那看起來影響不大。但如果換行是介於兩個中文字之間，那就會 像這樣在文字間出現詭異的空格。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="inline-markup"&gt;
+&lt;h3&gt;Inline Markup 的空格&lt;/h3&gt;
+&lt;p&gt;不像 Markdown，reStructuredText 要求&lt;strong&gt;必須用空格&lt;/strong&gt;
+（&lt;a class="reference external" href="http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#inline-markup-recognition-rules"&gt;或其他類似功能的字元&lt;/a&gt;）將 Inline Markup
+與其他的文字區隔開來：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;This is **inline markup** bold.
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;這樣的空格會被保留到 HTML：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;p&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;This is &lt;span class="p"&gt;&amp;lt;&lt;/span&gt;&lt;span class="nt"&gt;strong&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;inline markup&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;strong&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt; bold.&lt;span class="p"&gt;&amp;lt;/&lt;/span&gt;&lt;span class="nt"&gt;p&lt;/span&gt;&lt;span class="p"&gt;&amp;gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;跟上面提到的一樣，這空格在英文沒差，中文就不行了。不過江湖在走，Workaround 要有，最簡單的方法是自己用 &lt;tt class="docutils literal"&gt;\&lt;/tt&gt; 來「跳脫」這個空格：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;This is\ **inline markup**\ bold.
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;但每次都要手動加入這反斜線實在有點麻煩。如果這空格能自己消失，那該有多好。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="bonus"&gt;
+&lt;h3&gt;Bonus：中英文間的空格&lt;/h3&gt;
+&lt;blockquote&gt;
+有研究顯示，打字的時候不喜歡在中文和英文之間加空格的人，感情路都走得很辛苦，有七成的比例會在 34 歲的時候跟自己不愛的人結婚，而其餘三成的人最後只能把遺產留給自己的貓。畢竟愛情跟書寫都需要適時地留白。
+—— &lt;a class="reference external" href="https://github.com/vinta/pangu.js"&gt;vinta/pangu.js&lt;/a&gt;&lt;/blockquote&gt;
+&lt;p&gt;…這種空格我個人是覺得還可以接受啦，不過如果 Pelican 能自動幫我加上這些空格，那我就不用擔心未來會跟不愛的人結婚了。寫程式真是份偉大的工作。&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="pelican-plugin"&gt;
+&lt;h2&gt;寫個 Pelican Plugin 吧！&lt;/h2&gt;
+&lt;p&gt;原本想說可以從處理 reStructuredText 的函式庫 &lt;a class="reference external" href="http://docutils.sourceforge.net/"&gt;docutils&lt;/a&gt; 下手，無奈功力不夠高深，看不出來到底該怎麼修改他的行為，只好從 Pelican 下手。&lt;/p&gt;
+&lt;p&gt;之前提到 Pelican 能夠用 Python 自己擴充功能，而在官方的 &lt;a class="reference external" href="https://github.com/getpelican/pelican-plugins"&gt;pelican-plugins&lt;/a&gt;
+列表中搜尋了一下只有 &lt;a class="reference external" href="https://github.com/yuex/cjk-auto-spacing"&gt;cjk-auto-spacing&lt;/a&gt; 能夠自動調整中英文間的空格，但還是沒有解決所有的問題。Google 了一下找到這篇「&lt;a class="reference external" href="jekyll_cjk_newline"&gt;解决 jekyll 中文换行变成空格的问题&lt;/a&gt;」，但他是用
+&lt;a class="reference external" href="https://jekyllrb.com/"&gt;Jekyll&lt;/a&gt; 而不是 Pelican。安捏…不如自己寫一個吧！&lt;/p&gt;
+&lt;div class="section" id="id4"&gt;
+&lt;h3&gt;Pelican Plugin 的運作方式&lt;/h3&gt;
+&lt;blockquote&gt;
+Pelican 定義了各種「&lt;strong&gt;信號&lt;/strong&gt;」（Signal），代表了從原始碼到最後生出 HTML 的各個&lt;strong&gt;階段&lt;/strong&gt;。你可以將自己寫的 Python 函式&lt;strong&gt;註冊&lt;/strong&gt;到這些信號上，Pelican 就會在那些&lt;strong&gt;信號對應的階段發生時&lt;/strong&gt;呼叫你的函式，並將當下的狀態或處理的物件傳進這個函式，讓你的函式能夠調整 Pelican 的行為。細節和信號列表請參考 &lt;a class="reference external" href="https://docs.getpelican.com/en/stable/plugins.html"&gt;Pelican Plugin Document&lt;/a&gt; 。&lt;/blockquote&gt;
+&lt;p&gt;前面提到了 &lt;a class="reference external" href="https://github.com/yuex/cjk-auto-spacing"&gt;cjk-auto-spacing&lt;/a&gt; ，理所當然拿他來參考一下。它處理的方式是使用信號
+&lt;em&gt;content_object_init&lt;/em&gt; 來取得 &lt;tt class="docutils literal"&gt;content_object&lt;/tt&gt; 物件，而這個物件的 &lt;tt class="docutils literal"&gt;_content&lt;/tt&gt;
+屬性存放了從 reStructuredText 及 Markdown 原始碼轉換而來的 &lt;strong&gt;HTML&lt;/strong&gt; ，以 &lt;tt class="docutils literal"&gt;str&lt;/tt&gt;
+儲存。我們可以根據需求來調整這個 HTML，調整完後再 assign 回 &lt;tt class="docutils literal"&gt;_content&lt;/tt&gt; ，Pelican 就會用這份新的 HTML 繼續之後的工作。&lt;/p&gt;
+&lt;p&gt;舉例來說，如果我們想把 HTML 裡的所有 &lt;tt class="docutils literal"&gt;&amp;lt;p&amp;gt;&lt;/tt&gt; Tag 換成 &lt;tt class="docutils literal"&gt;&amp;lt;foo&amp;gt;&lt;/tt&gt; ，可以很快的用
+Regular Expression 來達成：&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;re&lt;/span&gt;
+
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;pelican&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;signals&lt;/span&gt;
+
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;process&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;content&lt;/span&gt;&lt;span class="p"&gt;):&lt;/span&gt;
+    &lt;span class="n"&gt;new_content&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;re&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;sub&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="sa"&gt;r&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&amp;lt;(/)?p&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="sa"&gt;r&lt;/span&gt;&lt;span class="s1"&gt;&amp;#39;&amp;lt;\1foo&amp;gt;&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;content&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;_content&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;content&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;_content&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;new_content&lt;/span&gt;
+
+
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;register&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="n"&gt;signals&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;content_object_init&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;connect&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;process&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Pelican 規定每個 Plugin 都必須要有 &lt;tt class="docutils literal"&gt;register&lt;/tt&gt; 函式，目的在指定你需要哪些信號以及他們要觸發的函式。&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="pelican-cjk"&gt;
+&lt;h2&gt;Pelican-CJK&lt;/h2&gt;
+&lt;p&gt;花了些時間用 Regular Expression 刻了一個能夠自動處理以上問題的 Plugin：
+&lt;a class="reference external" href="https://github.com/johnliu55tw/pelican-cjk"&gt;pelican-cjk&lt;/a&gt; 。它能夠自動根據你寫的內容調整 HTML，解決上述那些小毛病。&lt;/p&gt;
+&lt;p&gt;在開發這個 Plugin 的時候考慮了以下幾點：&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;必須支援 reStructuredText 及 Markdown&lt;/li&gt;
+&lt;li&gt;不想依賴其他第三方模組&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;如果要從原始碼（ &lt;tt class="docutils literal"&gt;.md&lt;/tt&gt; 與 &lt;tt class="docutils literal"&gt;.rst&lt;/tt&gt; ）或 Parser 下手，就還得考慮 reStructuredText 和 Markdown 的差異，所以如果兩個都得支援，直接從 HTML 下手會好處理很多。&lt;/p&gt;
+&lt;p&gt;而基於第二點，
+&lt;a class="reference external" href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/"&gt;Beautiful Soup&lt;/a&gt;
+等等能夠幫助處理 HTML 的模組也就不考慮了，而 Python 內建的
+&lt;a class="reference external" href="https://docs.python.org/3/library/html.parser.html"&gt;HTML Parser&lt;/a&gt; 又太陽春，所以最後我直接用 Regex 來處理。但這不免有些小問題：&lt;/p&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;無法判斷目前要調整的文字屬於那種區塊。reStructuredText 和 Markdown 都有所謂的「Literal Block」，在這個區塊內是不會處理任何標記的。
+&lt;strong&gt;但因為程式無法根據 HTML 判斷區塊，它一樣會調整這個區塊內的文字。&lt;/strong&gt;
+不過 Literal Block 通常是用來放範例程式碼的，比較不會出現中英混用的情況，所以就我認為影響不大。&lt;/li&gt;
+&lt;li&gt;透過上述信號拿到的 HTML &lt;strong&gt;不包含文章的標題&lt;/strong&gt;，所以標題無法調整，得自己加入中英文間的空格。這應該可以透過其他信號取得，但我還沒研究。&lt;/li&gt;
+&lt;li&gt;為了簡單起見，我寫的 Regex 不會針對以下情況調整空格：&lt;ul&gt;
+&lt;li&gt;巢狀 Inline Markup：reStructuredText 不允許這種情況，也就是說 HTML 中不會出現
+&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;English&amp;lt;em&amp;gt;&amp;lt;strong&amp;gt;斜體又粗體&amp;lt;/strong&amp;gt;&amp;lt;/em&amp;gt;&lt;/span&gt;&lt;/tt&gt; 這樣的東西。但 Markdown 允許，所以這是有機會出現的。以這個例子來說，「English」與「斜體又粗體」間就不會自動加空格。&lt;/li&gt;
+&lt;li&gt;連續 Inline Markup： &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;&amp;lt;em&amp;gt;English&amp;lt;/em&amp;gt;&amp;lt;strong&amp;gt;很強&amp;lt;/strong&amp;gt;&lt;/span&gt;&lt;/tt&gt;
+連續的兩個 Inline Markup 也需要額外判斷，而且使用情況也不多，所以在此也不考慮。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;希望這個 Plugin 能夠幫助更多跟我一樣毛很多的人，如果大家有什麼更好的方法也歡迎一起討論。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="references"&gt;
+&lt;h2&gt;References&lt;/h2&gt;
+&lt;ul class="simple"&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://github.com/vinta/pangu.js"&gt;vinta/pangu.js&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="jekyll_cjk_newline"&gt;解决 jekyll 中文换行变成空格的问题&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+</content><category term="Python"></category><category term="Pelican"></category></entry><entry><title>用 Python 控制其他行程的 TTY 終端裝置</title><link href="https://johnliu55.tw/use-python-to-control-other-process-tty.html" rel="alternate"></link><published>2018-04-11T00:00:00+08:00</published><updated>2018-04-11T00:00:00+08:00</updated><author><name>John Liu</name></author><id>tag:johnliu55.tw,2018-04-11:/use-python-to-control-other-process-tty.html</id><summary type="html">&lt;div class="section" id="foreword"&gt;
 &lt;h2&gt;Foreword&lt;/h2&gt;
 &lt;p&gt;這篇文章會稍微解釋 Unix 的 TTY 系統以及 Pseudo Terminal 的概念，接著討論如何使用 Python 的 &lt;tt class="docutils literal"&gt;pty&lt;/tt&gt; 模組中的 &lt;tt class="docutils literal"&gt;pty.fork()&lt;/tt&gt;
 來建立並控制子行程的 TTY 系統，最後用 Python 來實作控制 &lt;em&gt;madplay&lt;/em&gt; 這個 CLI MP3 Player。&lt;/p&gt;
