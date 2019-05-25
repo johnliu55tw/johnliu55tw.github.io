@@ -4,3 +4,6 @@
 [submodule "plugins/pelican_cjk"]
 	path = plugins/pelican_cjk
 	url = https://github.com/johnliu55tw/pelican-cjk.git
+[submodule "pelican-plugins"]
+	path = pelican-plugins
+	url = https://github.com/getpelican/pelican-plugins
