@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>John Engineering Stuff - Python</title><link href="https://johnliu55.tw/" rel="alternate"></link><link href="https://johnliu55.tw/feeds/python.atom.xml" rel="self"></link><id>https://johnliu55.tw/</id><updated>2019-05-25T00:00:00+08:00</updated><entry><title>用 Pelican 寫中文文章</title><link href="https://johnliu55.tw/when-pelican-meets-cjk.html" rel="alternate"></link><published>2019-05-25T00:00:00+08:00</published><updated>2019-05-25T00:00:00+08:00</updated><author><name>John Liu</name></author><id>tag:johnliu55.tw,2019-05-25:/when-pelican-meets-cjk.html</id><summary type="html">&lt;p class="first last"&gt;用Pelican與reStructuredText寫中文文章遇到了空白、換行等等格式問題，
+<feed xmlns="http://www.w3.org/2005/Atom"><title>John Engineering Stuff - Python</title><link href="https://johnliu55.tw/" rel="alternate"></link><link href="https://johnliu55.tw/feeds/python.atom.xml" rel="self"></link><id>https://johnliu55.tw/</id><updated>2019-06-08T00:00:00+08:00</updated><entry><title>用 Pelican 寫中文文章</title><link href="https://johnliu55.tw/when-pelican-meets-cjk.html" rel="alternate"></link><published>2019-05-25T00:00:00+08:00</published><updated>2019-06-08T00:00:00+08:00</updated><author><name>John Liu</name></author><id>tag:johnliu55.tw,2019-05-25:/when-pelican-meets-cjk.html</id><summary type="html">&lt;p class="first last"&gt;用Pelican與reStructuredText寫中文文章遇到了空白、換行等等格式問題，
 所以自己寫了一個Pelican Plugin來解決這些問題。&lt;/p&gt;
-</summary><content type="html">&lt;p&gt;想寫 Blog 很久了，一直覺得該找個地方記錄一下腦子裡的想法，不然我記性超級差，隔天就忘了自己到底在忙什麼。&lt;/p&gt;
+</summary><content type="html">&lt;div class="admonition admonition-"&gt;
+&lt;p class="first admonition-title"&gt;變更記錄&lt;/p&gt;
+&lt;dl class="last docutils"&gt;
+&lt;dt&gt;2019-06-08&lt;/dt&gt;
+&lt;dd&gt;修正「解决 jekyll 中文换行变成空格的问题」這篇文章的連結。&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/div&gt;
+&lt;p&gt;想寫 Blog 很久了，一直覺得該找個地方記錄一下腦子裡的想法，不然我記性超級差，隔天就忘了自己到底在忙什麼。&lt;/p&gt;
 &lt;p&gt;那要用什麼寫？&lt;/p&gt;
 &lt;p&gt;一般的 Blog 服務當然是不考慮，對&lt;strong&gt;時常要放程式碼&lt;/strong&gt;的人來說完全不適合。&lt;/p&gt;
 &lt;p&gt;在很潮的 Medium 上寫過一篇文章，沒有原生支援 Code Syntax Highlighting
@@ -71,7 +78,7 @@ a word space in all contexts except preformatted text.&lt;/blockquote&gt;
 &lt;h2&gt;寫個 Pelican Plugin 吧！&lt;/h2&gt;
 &lt;p&gt;原本想說可以從處理 reStructuredText 的函式庫 &lt;a class="reference external" href="http://docutils.sourceforge.net/"&gt;docutils&lt;/a&gt; 下手，無奈功力不夠高深，看不出來到底該怎麼修改他的行為，只好從 Pelican 下手。&lt;/p&gt;
 &lt;p&gt;之前提到 Pelican 能夠用 Python 自己擴充功能，而在官方的 &lt;a class="reference external" href="https://github.com/getpelican/pelican-plugins"&gt;pelican-plugins&lt;/a&gt;
-列表中搜尋了一下只有 &lt;a class="reference external" href="https://github.com/yuex/cjk-auto-spacing"&gt;cjk-auto-spacing&lt;/a&gt; 能夠自動調整中英文間的空格，但還是沒有解決所有的問題。Google 了一下找到這篇「&lt;a class="reference external" href="jekyll_cjk_newline"&gt;解决 jekyll 中文换行变成空格的问题&lt;/a&gt;」，但他是用
+列表中搜尋了一下只有 &lt;a class="reference external" href="https://github.com/yuex/cjk-auto-spacing"&gt;cjk-auto-spacing&lt;/a&gt; 能夠自動調整中英文間的空格，但還是沒有解決所有的問題。Google 了一下找到這篇「&lt;a class="reference external" href="http://blog.guorongfei.com/2015/04/25/how-to-fix-the-markdown-newline-blank-problem/"&gt;解决 jekyll 中文换行变成空格的问题&lt;/a&gt;」，但他是用
 &lt;a class="reference external" href="https://jekyllrb.com/"&gt;Jekyll&lt;/a&gt; 而不是 Pelican。安捏…不如自己寫一個吧！&lt;/p&gt;
 &lt;div class="section" id="id4"&gt;
 &lt;h3&gt;Pelican Plugin 的運作方式&lt;/h3&gt;
@@ -132,7 +139,7 @@ Regular Expression 來達成：&lt;/p&gt;
 &lt;h2&gt;References&lt;/h2&gt;
 &lt;ul class="simple"&gt;
 &lt;li&gt;&lt;a class="reference external" href="https://github.com/vinta/pangu.js"&gt;vinta/pangu.js&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class="reference external" href="jekyll_cjk_newline"&gt;解决 jekyll 中文换行变成空格的问题&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="http://blog.guorongfei.com/2015/04/25/how-to-fix-the-markdown-newline-blank-problem/"&gt;解决 jekyll 中文换行变成空格的问题&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 </content><category term="Python"></category><category term="Pelican"></category></entry><entry><title>用 Python 控制其他行程的 TTY 終端裝置</title><link href="https://johnliu55.tw/use-python-to-control-other-process-tty.html" rel="alternate"></link><published>2018-04-11T00:00:00+08:00</published><updated>2018-04-11T00:00:00+08:00</updated><author><name>John Liu</name></author><id>tag:johnliu55.tw,2018-04-11:/use-python-to-control-other-process-tty.html</id><summary type="html">&lt;p class="first last"&gt;這篇文章會稍微解釋Unix的TTY系統以及Pseudo Terminal的概念，
