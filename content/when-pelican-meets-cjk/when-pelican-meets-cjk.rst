@@ -3,10 +3,16 @@
 #####################
 
 :date: 2019-05-25
+:modified: 2019-06-08
 :category: Python
 :tags: Python, Pelican
 :summary: 用Pelican與reStructuredText寫中文文章遇到了空白、換行等等格式問題，
           所以自己寫了一個Pelican Plugin來解決這些問題。
+
+.. admonition:: 變更記錄
+
+   2019-06-08
+      修正「解决 jekyll 中文换行变成空格的问题」這篇文章的連結。
 
 想寫Blog很久了，一直覺得該找個地方記錄一下腦子裡的想法，不然我記性超級差，
 隔天就忘了自己到底在忙什麼。
@@ -220,7 +226,7 @@ References
 
 - `解决 jekyll 中文换行变成空格的问题`_
 
-.. _解决 jekyll 中文换行变成空格的问题: jekyll_cjk_newline
+.. _解决 jekyll 中文换行变成空格的问题: http://blog.guorongfei.com/2015/04/25/how-to-fix-the-markdown-newline-blank-problem/
 .. _docutils: http://docutils.sourceforge.net/
 .. _Pelican: https://docs.getpelican.com/en/stable/
 .. _Pelican Themes: http://www.pelicanthemes.com/
