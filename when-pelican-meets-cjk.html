@@ -114,12 +114,12 @@
 <div class="section" id="id2">
 <h3>換行變成了空格</h3>
 <p>我是龜毛人，原始碼的行數不超過 80 個字元是基本，最多也不能超過 100，所以很長的一個段落會用多行表示：</p>
-<div class="highlight"><pre><span></span><span class="err">我是龜毛人，原始碼的行數不超過</span><span class="mi">80</span><span class="err">個字元是基本，最多也不能超過</span><span class="mi">100</span><span class="err">，</span>
-<span class="err">所以很長的一個段落會用多行表示：</span>
+<div class="highlight"><pre><span></span><span class="n">我是龜毛人</span><span class="err">，</span><span class="n">原始碼的行數不超過 80 個字元是基本</span><span class="err">，</span><span class="n">最多也不能超過 100</span><span class="err">，</span>
+<span class="n">所以很長的一個段落會用多行表示</span><span class="err">：</span>
 </pre></div>
 <p>reStructuredText 和 Markdown 都會保留這個換行字元到轉換後的 HTML 中：</p>
-<div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="err">我是龜毛人，原始碼的行數不超過</span><span class="mi">80</span><span class="err">個字元是基本，最多也不能超過</span><span class="mi">100</span><span class="err">，</span>
-<span class="err">所以很長的一個段落會用多行表示：</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+<div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">我是龜毛人</span><span class="err">，</span><span class="n">原始碼的行數不超過 80 個字元是基本</span><span class="err">，</span><span class="n">最多也不能超過 100</span><span class="err">，</span>
+<span class="n">所以很長的一個段落會用多行表示</span><span class="err">：</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
 </pre></div>
 <p>而瀏覽器在遇到這樣的換行字元時會將他轉換為空格，因為
 <a class="reference external" href="https://www.w3.org/MarkUp/html-spec/html-spec_4.html#SEC4.2.2">Spec</a>
