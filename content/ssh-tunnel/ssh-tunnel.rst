@@ -1,6 +1,6 @@
-##################
-SSH Tunneling 詳解
-##################
+####################################
+SSH Tunneling (Port Forwarding) 詳解
+####################################
 
 :date: 2020-04-25
 :modified: 2020-04-25
@@ -9,22 +9,54 @@ SSH Tunneling 詳解
 :summary: 詳細解釋使用SSH的Local Port Forwarding、Remote Port Forwarding、
           和Dynamic Port Forwarding來建立加密通道（Tunneling）的方法。
 
-*************************
-Port Fowarding 的角色定義
-*************************
+前陣子因為疫情的關係開始WFH，順勢就研究起了用SSH建立加密連線通道的方式，
+然後才發現他實在是超級強大，就把一些眉眉角角給記錄下來，之後可以拿來參考一下。
 
-不管是Local還是Remote Port Forwarding，都會有下面這三個角色：
+這篇文是針對SSH Tunneling所寫，所以假設你對SSH有一定的了解。
+如果你還不太熟悉SSH是什麼，建議先了解相關知識再來看唷！
+
+*****************************************
+什麼是SSH Tunneling (Port Forwarding)？
+*****************************************
+
+Tunneling通常指的是將網路上的A、B兩個端點，用某種方式連接起來形成一個隧道，
+讓A、B兩端的通訊能夠穿透某些限制（例如防火牆），
+或是能將通訊內容加密避免資訊洩漏。
+而SSH Tunneling指的就是利用SSH協定建立這個隧道，所以不但能加密你的通訊，
+如果A、B之間設有防火牆擋掉某些特定Port的連線（例如HTTP/HTTPS的80/443），
+SSH Tunneling也會讓防火牆認為這只是一般的SSH連線，進而達到「穿透」的效果。
+
+另外，因為SSH Tunneling的目標是兩個端點上的Port，
+而且通訊過程就像是把對A點上的某個Port所傳送的資料「轉送」至B點上的某個Port，
+所以SSH Tunneling又稱為 **SSH Port Forwarding** 。
+
+SSH Port Forwarding有下列三種模式：
+
+- Local Port Forwarding
+- Remote Port Forwarding
+- Dynamic Port Forwarding
+
+接下來會一一說明。首先先來看看SSH Port Forwarding中參與的角色有哪些。
+
+***************************
+Port Fowarding 裡的角色定義
+***************************
+
+對Local和Remote Port Forwarding來說，都會有下面這三個角色：
 
 Client
-    - 任何你可以敲 ``ssh`` 指令的機器
+    - 任何你可以敲 ``ssh`` 指令的機器來啟動Port Forwarding的機器
 
 SSH Server
     - 可以被 **Client** 用SSH連進去的機器
 
 Target Server
-    - 某台你想對外開啟的機器
+    - 某一台你想建立連線的機器，通常是為了對外開放這台機器上的服務
     - **注意** ， **Client** 與 **SSH Server** 本身都可以是 **Target Server** ，
       不是真的要有三台機器才可以進行Port Forwarding！
+
+而Dynamic Port Forwarding比較不一樣，在於Target Server不會只有一台，
+而是可以被動態決定的。
 
 *********************
 Local Port Forwarding
@@ -184,6 +216,8 @@ SSH指令：
 這應該是SSH Port Forwarding最強大的功能了。只要在網路上租一台最便宜的主機
 （Linode, Digital Ocean, ...），你就可以拿他來當跳板，
 透過這邊提到的方式來連回內部網路上的服務。
+不過前題是你得在有內網連線時將Port Forwarding設定好，
+如果你到家後才想到，那就請你回公司一趟吧…
 
 ***********************
 Dynamic Port Forwarding
@@ -251,4 +285,8 @@ References
 
 - `SOCKS (Wiki) <SOCKS_>`_
 
+- `SSH Port Forwarding Example`_
+
 .. _SOCKS: https://zh.wikipedia.org/wiki/SOCKS
+
+.. _SSH Port Forwarding Example: https://www.ssh.com/ssh/tunneling/example
