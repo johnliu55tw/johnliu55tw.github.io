@@ -189,4 +189,66 @@ SSH指令：
 Dynamic Port Forwarding
 ***********************
 
+指令語法
+========
 
+.. code-block:: general
+
+    ssh -D [bind_address:]<port> <SSH Server>
+
+在SSH Server上啟動一個 SOCKS_ 代理伺服器，
+同時在 **Client** 上開啟 ``bind_address:port`` 等待連線，當有人連上時，
+將所有資料轉送到這個SOCKS代理伺服器上，啟動相對應的連線請求。
+
+使用情境
+========
+
+1. 建立一個HTTP代理伺服器連到內網的所有HTTP(S)服務
+--------------------------------------------------
+
+只要有一台位於內網但具有外部IP的機器，讓你能夠從外面連到他，
+你就可以利用這個方法建立一個HTTP代理伺服器，
+讓你能夠從外面連回內網裡的所有HTTP(S)服務。
+
+Client
+    - 你的電腦
+
+SSH Server
+    - 內網裡具有外部IP的機器
+
+Target Server
+    - N/A
+
+SSH指令：
+
+.. code-block:: general
+
+    ssh -D 9090 johnliu@internal-machine
+
+假設你是用Linux和Chrome，
+你可以在你的電腦上用以下指令讓Chrome使用這個代理伺服器：
+
+.. code-block:: general
+
+    google-chrome --user-data-dir=~/proxied-chrome --proxy-server=socks5://localhost:9090
+
+.. note::
+
+    - 這邊的 ``google-chrome`` 只是範例，不同的Linux發行版名字可能會不同
+    - ``--user-data-dir`` 是為了讓Chrome能夠開啟一個新的Chrome session，
+      不加的話 ``--proxy-server`` 這個設定就沒用了
+
+一般的Port Forwarding只能夠轉送 **一個IP上的一個Port** ，
+當你有很多IP或很多Port想轉時就只能一個一個開， 很不方便。
+相比之下，Dynamic Port Forwarding能直接架起一個代理伺服器，
+只要你的Client有支援SOCKS協定，透過這個代理伺服器讓你想怎麼轉就怎麼轉。
+不過這方式也不是沒缺點，就是那台轉送用的機器一定得要有對外IP，
+這樣才能夠從你的電腦連回來。
+
+**********
+References
+**********
+
+- `SOCKS (Wiki) <SOCKS_>`_
+
+.. _SOCKS: https://zh.wikipedia.org/wiki/SOCKS
