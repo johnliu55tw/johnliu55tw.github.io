@@ -73,16 +73,24 @@ Local Port Forwarding
 將所有資料轉送到 ``host:host_port`` 去。
 **注意** ， ``host`` 是相對於 **SSH Server** 的位址，而不是 **Client** ！
 
-使用情境
-========
+使用情境一：連到位在防火牆後的開發伺服器上的服務
+================================================
 
-1. 連到位在防火牆後的伺服器上的服務
------------------------------------
+你有一台位於防火牆後的開發伺服器， 你在上面架了某個服務在Port 8080上，
+但防火牆只開放Port 22的SSH連線，讓你無法從你的電腦直接連到Port 8080，
+但你又很想連到他…
 
-有一台位於防火牆後的伺服器上架了某個服務在Port 8080上，
-但防火牆只開放Port 22的SSH連線，讓你無法直接連到Port 8080，
-這時候就可以利用SSH Local Forwarding來把你電腦上的某個Port（假設為9090）
+.. image:: {static}images/local_scenario1_problem.png
+   :alt: 情境1示意圖
+
+這時候只要你能夠SSH到那台伺服器，
+就可以利用Local Port Forwarding來把你電腦上的某個Port（假設為9090）
 將資料轉發（Forward）到伺服器的Port 8080。
+這樣一來， 連上你的電腦的Port 9090就等於連上了防火牆後的伺服器的Port 8080 ，
+也就繞過了防火牆的限制。
+
+.. image:: {static}images/local_scenario1_solved.png
+   :alt: 情境1解法示意圖
 
 Client
     - 你的電腦
@@ -102,8 +110,6 @@ SSH指令：
 
 這邊的 ``localhost`` 是相對於 ``johnliu@my-server`` ，
 指的就是防火牆後的伺服器本身。
-在這之後，連上你的電腦的Port 9090就等於連上了防火牆後的伺服器的Port 8080 ，
-這樣一來就成功的繞過了防火牆的限制！
 
 .. note::
 
@@ -120,6 +126,41 @@ SSH指令：
       .. code-block:: general
 
           ssh -L 0.0.0.0:9090:localhost:8080 johnliu@my-server
+
+使用情境二：透過防火牆後的機器，連到防火牆後的特定服務
+======================================================
+
+情境一有用的前提是 **你能夠SSH到提供服務的伺服器裡** ，
+但今天如果你沒有權限，無法SSH進到提供服務的伺服器，那該怎麼辦呢？
+
+.. image:: {static}images/local_scenario2_problem.png
+   :alt: 情境1示意圖
+
+沒問題！只要你在防火牆後有任何一台你可以SSH的機器，
+接著修改一下指令裡的 ``host`` 設定，你就可以利用這台機器進行資料轉送：
+
+.. image:: {static}images/local_scenario2_solved.png
+   :alt: 情境1解法示意圖
+
+Client
+    - 你的電腦
+
+SSH Server
+    - 防火牆後你的機器
+    - SSH Destination： ``johnliu@my-server``
+
+Target Server
+    - 防火牆後的伺服器
+    - ``192.168.1.101:8080``
+
+SSH指令：
+
+.. code-block:: general
+
+   ssh -L 9090:192.168.1.101:8080 johnliu@my-server
+
+這邊的 ``192.168.1.101`` 是相對於 ``johnliu@my-server`` ，
+所以是防火牆後的伺服器的IP位址。
 
 **********************
 Remote Port Forwarding
