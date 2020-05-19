@@ -177,17 +177,21 @@ Remote Port Forwarding
 將所有資料轉送到 ``host:host_port`` 去。
 **注意** ， ``host`` 是相對於 **Client** 的位址，而不是 **SSH Server** ！
 
-使用情境
-========
+使用情境一：透過對外機器，讓其他人能夠連到你的電腦上的服務
+==========================================================
 
-1. 透過對外機器，讓其他人能夠連到你的電腦上的服務
--------------------------------------------------
+你在你的電腦上開發完了一個服務架在Port 8080上，然後你想要Demo給客戶看，
+但你的電腦只有內部IP，所以無法讓客戶連進來：
 
-你在你的電腦上開發完了一個服務，架在Port 8080上想要Demo給客戶看，
-但你的電腦只有內部IP，所以無法從Internet連上。
+.. image:: {static}images/remote_scenario1_problem.png
+   :alt: Remote情境1示意圖
+
 這時候利用SSH Remote Forwarding，
 就可以藉由一台有Internet IP的對外機器，將上面的某個Port（假設為9090），
 讓客戶連到你的電腦上Port 8080的服務。
+
+.. image:: {static}images/remote_scenario1_solved.png
+   :alt: Remote情境1解法示意圖
 
 Client
     - 你的電腦
@@ -211,26 +215,34 @@ SSH指令：
 
 .. warning::
 
-    基於安全考量，**Remote Forwarding預設都只能夠bind在localhost上** ，
-    所以預設是無法從外部連到的。
+    基於安全考量，
+    **Remote Forwarding預設都只能夠bind在SSH Server的localhost上** ，
+    所以單靠以上指令是無法讓Port 9090開放給外部連線的。
     你必須調整SSH Server上的SSH服務的設定檔（一般在 ``/etc/ssh/sshd_config`` ）
     加入 ``GatewayPorts`` 設定，才能讓所有人都連到：
 
     .. code-block:: general
 
-        GatewayPorts no
+        GatewayPorts yes
 
     這邊有三個選項：預設為 ``no`` ，也就是唯一指定localhost；
     設定為 ``yes`` 可以唯一指定為wildcard（ ``0.0.0.0`` ）；
     設定為 ``clientspecified`` 可以讓啟動Remote Forwarding的Client自行指定。
 
-2. 透過對外機器，從外面連回內部網路上的服務
--------------------------------------------
+使用情境二：透過對外機器，從外面連回內部網路上的服務
+====================================================
 
 有一個在內網裡的內部服務，你的電腦可以用IP ``192.168.1.100``
 和Port 8080連到這個服務，但因為都在內網所以大家都沒有Internet IP，
-所以你無法從外面連回來。藉由Remote Forwarding和一台對外機器，
-可以讓你從任何地方連回這個服務。
+所以無法讓你從家裡透過Internet連回來：
+
+.. image:: {static}images/remote_scenario2_problem.png
+   :alt: Remote情境2示意圖
+
+這時候藉由Remote Forwarding和一台對外機器， 可以讓你從任何地方連回這個服務：
+
+.. image:: {static}images/remote_scenario2_solved.png
+   :alt: Remote情境2解法示意圖
 
 Client
     - 你的電腦
@@ -254,8 +266,8 @@ SSH指令：
 這樣子，只要連到 ``external-server:9090`` 就等於是連到內網的服務
 ``192.168.1.100:8080`` 。
 
-這應該是SSH Port Forwarding最強大的功能了。只要在網路上租一台最便宜的主機
-（Linode, Digital Ocean, ...），你就可以拿他來當跳板，
+這應該是SSH Port Forwarding最強大的功能了！只要在網路上租一台最便宜的主機
+（Linode, Digital Ocean之類的），你就可以拿他來當跳板，
 透過這邊提到的方式來連回內部網路上的服務。
 不過前題是你得在有內網連線時將Port Forwarding設定好，
 如果你到家後才想到，那就請你回公司一趟吧…
@@ -275,15 +287,15 @@ Dynamic Port Forwarding
 同時在 **Client** 上開啟 ``bind_address:port`` 等待連線，當有人連上時，
 將所有資料轉送到這個SOCKS代理伺服器上，啟動相對應的連線請求。
 
-使用情境
-========
+使用情境：建立一個HTTP代理伺服器連到內網的所有HTTP(S)服務
+=========================================================
 
-1. 建立一個HTTP代理伺服器連到內網的所有HTTP(S)服務
---------------------------------------------------
-
-只要有一台位於內網但具有外部IP的機器，讓你能夠從外面連到他，
+只要有一台位於內網且 **具有外部IP** 的機器，
 你就可以利用這個方法建立一個HTTP代理伺服器，
-讓你能夠從外面連回內網裡的所有HTTP(S)服務。
+讓你能夠從外面連回內網裡的所有HTTP(S)服務：
+
+.. image:: {static}images/dynamic.png
+   :alt: Dynamic情境示意圖
 
 Client
     - 你的電腦
