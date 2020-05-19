@@ -45,7 +45,7 @@ Port Fowarding 裡的角色定義
 對Local和Remote Port Forwarding來說，都會有下面這三個角色：
 
 Client
-    - 任何你可以敲 ``ssh`` 指令的機器來啟動Port Forwarding的機器
+    - 任何你可以敲 ``ssh`` 指令來啟動Port Forwarding的機器
 
 SSH Server
     - 可以被 **Client** 用SSH連進去的機器
