@@ -254,8 +254,10 @@
 &lt;div class="section" id="references"&gt;
 &lt;h2&gt;References&lt;/h2&gt;
 &lt;ul class="simple"&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;man ssh&lt;/tt&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="reference external" href="https://zh.wikipedia.org/wiki/SOCKS"&gt;SOCKS (Wiki)&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="reference external" href="https://www.ssh.com/ssh/tunneling/example"&gt;SSH Port Forwarding Example&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://www.booleanworld.com/guide-ssh-port-forwarding-tunnelling/"&gt;A Guide to SSH Port Forwarding/Tunnelling&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 </content><category term="SSH, Linux"></category><category term="SSH"></category><category term="Linux"></category><category term="Tunneling"></category><category term="Port Forwarding"></category></entry><entry><title>用 Pelican 寫中文文章</title><link href="https://johnliu55.tw/when-pelican-meets-cjk.html" rel="alternate"></link><published>2019-05-25T00:00:00+08:00</published><updated>2019-06-08T00:00:00+08:00</updated><author><name>John Liu</name></author><id>tag:johnliu55.tw,2019-05-25:/when-pelican-meets-cjk.html</id><summary type="html">&lt;p class="first last"&gt;用Pelican與reStructuredText寫中文文章遇到了空白、換行等等格式問題，

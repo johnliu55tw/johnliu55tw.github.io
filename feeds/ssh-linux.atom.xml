@@ -254,8 +254,10 @@
 &lt;div class="section" id="references"&gt;
 &lt;h2&gt;References&lt;/h2&gt;
 &lt;ul class="simple"&gt;
+&lt;li&gt;&lt;tt class="docutils literal"&gt;man ssh&lt;/tt&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="reference external" href="https://zh.wikipedia.org/wiki/SOCKS"&gt;SOCKS (Wiki)&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class="reference external" href="https://www.ssh.com/ssh/tunneling/example"&gt;SSH Port Forwarding Example&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class="reference external" href="https://www.booleanworld.com/guide-ssh-port-forwarding-tunnelling/"&gt;A Guide to SSH Port Forwarding/Tunnelling&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 </content><category term="SSH, Linux"></category><category term="SSH"></category><category term="Linux"></category><category term="Tunneling"></category><category term="Port Forwarding"></category></entry></feed>
