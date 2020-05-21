@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="John Liu" />
+
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content="SSH, Linux, Tunneling, Port Forwarding, SSH, Linux, " />
+
+<meta property="og:title" content="SSH Tunneling (Port Forwarding) 詳解 "/>
+<meta property="og:url" content="https://johnliu55.tw/ssh-tunnel.html" />
+<meta property="og:description" content="詳細解釋使用SSH的Local Port Forwarding、Remote Port Forwarding、 和Dynamic Port Forwarding來建立加密通道（Tunneling）的方法。" />
+<meta property="og:site_name" content="John Engineering Stuff" />
+<meta property="og:article:author" content="John Liu" />
+<meta property="og:article:published_time" content="2020-05-21T00:00:00+08:00" />
+<meta property="og:article:modified_time" content="2020-05-21T00:00:00+08:00" />
+<meta name="twitter:title" content="SSH Tunneling (Port Forwarding) 詳解 ">
+<meta name="twitter:description" content="詳細解釋使用SSH的Local Port Forwarding、Remote Port Forwarding、 和Dynamic Port Forwarding來建立加密通道（Tunneling）的方法。">
+
+        <title>SSH Tunneling (Port Forwarding) 詳解  · John Engineering Stuff
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/css/admonition.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/css/custom.css" media="screen">
+        <link href="https://johnliu55.tw/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="John Engineering Stuff - Full Atom Feed" />
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-140381969-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+
+
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="https://johnliu55.tw/"><span class=site-name>John Engineering Stuff</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href="https://johnliu55.tw">Home</a></li>
+                            <li ><a href="https://johnliu55.tw/pages/about.html">About</a></li>
+                            <li ><a href="https://johnliu55.tw/categories">Categories</a></li>
+                            <li ><a href="https://johnliu55.tw/tags">Tags</a></li>
+                            <li ><a href="https://johnliu55.tw/archives">Archives</a></li>
+                            <li><form class="navbar-search" action="https://johnliu55.tw/search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article itemscope>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="https://johnliu55.tw/ssh-tunnel.html"> SSH Tunneling (Port Forwarding) 詳解  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+
+            
+            <p>前陣子因為疫情的關係開始 WFH，順勢就研究起了用 SSH 建立加密連線通道的方式，然後才發現他超級強大，但實在有點難理解怎麼下指令，於是就把細節記錄下來，之後可以拿來參考一下。</p>
+<div class="section" id="id1">
+<h2>什麼是 SSH Tunneling (Port Forwarding)？</h2>
+<p>Tunneling 通常指的是將網路上的 A、B 兩個端點，用某種方式連接起來形成一個隧道，讓 A、B 兩端的通訊能夠穿透某些限制（例如防火牆），或是能將通訊內容加密避免洩漏。而 SSH Tunneling 指的就是利用 SSH 協定建立這個隧道，所以不但能加密你的通訊，如果 A、B 之間設有防火牆擋掉某些特定 Port 的連線（例如 HTTP/HTTPS 的 80/443），SSH Tunneling 也會讓防火牆認為這只是一般的 SSH 連線，進而達到「穿透防火牆」的效果。</p>
+<p>另外，因為 SSH Tunneling 的目標是兩個端點上的 Port，而且通訊過程就像是把對 A 點上的某個 Port X 所傳送的資料<strong>轉送</strong>
+（Forward）至 B 點上的 Port Y，所以 SSH Tunneling 又稱為 <strong>SSH Port Forwarding</strong> 。</p>
+<img alt="Tunneling 示意圖 " src="https://johnliu55.tw/ssh-tunnel/images/tunneling.png" />
+<p>SSH Port Forwarding 有下列三種模式：</p>
+<ul class="simple">
+<li>Local Port Forwarding</li>
+<li>Remote Port Forwarding</li>
+<li>Dynamic Port Forwarding</li>
+</ul>
+<p>接下來會一一說明各種模式。先來看看在 SSH Port Forwarding 當中參與的角色有哪些。</p>
+</div>
+<div class="section" id="port-fowarding">
+<h2>Port Fowarding 裡的角色定義</h2>
+<p>對 Local 和 Remote Port Forwarding 來說，都會有下面這三個角色：</p>
+<dl class="docutils">
+<dt>Client</dt>
+<dd><ul class="first last simple">
+<li>任何你可以敲 <tt class="docutils literal">ssh</tt> 指令來啟動 Port Forwarding 的機器</li>
+</ul>
+</dd>
+<dt>SSH Server</dt>
+<dd><ul class="first last simple">
+<li>可以被 <strong>Client</strong> 用 SSH 連進去的機器</li>
+</ul>
+</dd>
+<dt>Target Server</dt>
+<dd><ul class="first last simple">
+<li>某一台你想建立連線的機器，通常是為了對外開放這台機器上的服務</li>
+<li><strong>注意</strong>， <strong>Client</strong> 與 <strong>SSH Server</strong> 本身都可以是 <strong>Target Server</strong> ，不是真的要有三台機器才可以進行 Port Forwarding！</li>
+</ul>
+</dd>
+</dl>
+<p>而 Dynamic Port Forwarding 比較不一樣，在於 Target Server 不會只有一台，而是可以被動態決定的。</p>
+</div>
+<div class="section" id="local-port-forwarding">
+<h2>Local Port Forwarding</h2>
+<div class="section" id="id2">
+<h3>指令語法</h3>
+<div class="highlight"><pre><span></span>ssh -L [bind_address:]&lt;port&gt;:&lt;host&gt;:&lt;host_port&gt; &lt;SSH Server&gt;
+</pre></div>
+<p>在 <strong>Client</strong> 上開啟 <tt class="docutils literal">bind_address:port</tt> 等待連線，當有人連上時，將所有資料轉送到 <tt class="docutils literal">host:host_port</tt> 去。
+<strong>注意</strong>， <tt class="docutils literal">host</tt> 是相對於 <strong>SSH Server</strong> 的位址，而不是 <strong>Client</strong> ！</p>
+</div>
+<div class="section" id="id3">
+<h3>使用情境一：連到位在防火牆後的開發伺服器上的服務</h3>
+<p>你有一台位於防火牆後的開發伺服器， 你在上面架了某個服務在 Port 8080 上，但防火牆只開放 Port 22 的 SSH 連線，讓你無法從你的電腦直接連到 Port 8080，但你又很想連到他…</p>
+<img alt=" 情境 1 示意圖 " src="https://johnliu55.tw/ssh-tunnel/images/local_scenario1_problem.png" />
+<p>這時候只要你能夠 SSH 到那台伺服器，就可以利用 Local Port Forwarding 來開啟你電腦上的某個 Port（假設為 9090），將對它發送的資料轉送到伺服器的 Port 8080。這樣一來， 連上你的電腦的 Port 9090 就等於連上了防火牆後的伺服器的 Port 8080 ，也就繞過了防火牆的限制。</p>
+<img alt=" 情境 1 解法示意圖 " src="https://johnliu55.tw/ssh-tunnel/images/local_scenario1_solved.png" />
+<dl class="docutils">
+<dt>Client</dt>
+<dd><ul class="first last simple">
+<li>你的電腦</li>
+</ul>
+</dd>
+<dt>SSH Server</dt>
+<dd><ul class="first last simple">
+<li>防火牆後的伺服器</li>
+<li>SSH Destination： <tt class="docutils literal"><span class="pre">johnliu&#64;my-server</span></tt></li>
+</ul>
+</dd>
+<dt>Target Server</dt>
+<dd><ul class="first last simple">
+<li>防火牆後的伺服器</li>
+</ul>
+</dd>
+</dl>
+<p>SSH 指令：</p>
+<div class="highlight"><pre><span></span>ssh -L 9090:localhost:8080 johnliu@my-server
+</pre></div>
+<p>這邊的 <tt class="docutils literal">localhost</tt> 是相對於 <tt class="docutils literal"><span class="pre">johnliu&#64;my-server</span></tt> ，指的就是防火牆後的伺服器本身。</p>
+<div class="admonition note">
+<p class="first admonition-title">註釋</p>
+<ul class="last">
+<li><p class="first">你完全可以在你的電腦上用相同的 Port number 來做 Port Forwarding，這邊用 <tt class="docutils literal">9090</tt> 只是為了避免混淆：</p>
+<div class="highlight"><pre><span></span>ssh -L 8080:localhost:8080 johnliu@my-server
+</pre></div>
+</li>
+<li><p class="first">如果你沒有給 <tt class="docutils literal">bind_address</tt> ，預設會 Bind 在 <tt class="docutils literal">localhost</tt> 上。如果你想把 Port <tt class="docutils literal">9090</tt> 開放給所有人用：</p>
+<div class="highlight"><pre><span></span>ssh -L 0.0.0.0:9090:localhost:8080 johnliu@my-server
+</pre></div>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>使用情境二：透過防火牆後的機器，連到防火牆後的特定服務</h3>
+<p>情境一有用的前提是<strong>你能夠 SSH 到提供服務的伺服器裡</strong>，但今天如果你沒有權限，無法 SSH 進到提供服務的伺服器，那該怎麼辦呢？</p>
+<img alt=" 情境 1 示意圖 " src="https://johnliu55.tw/ssh-tunnel/images/local_scenario2_problem.png" />
+<p>沒問題！只要你在防火牆後有任何一台你可以 SSH 的機器，接著修改一下指令裡的 <tt class="docutils literal">host</tt> 設定，你就可以利用這台機器進行資料轉送：</p>
+<img alt=" 情境 1 解法示意圖 " src="https://johnliu55.tw/ssh-tunnel/images/local_scenario2_solved.png" />
+<dl class="docutils">
+<dt>Client</dt>
+<dd><ul class="first last simple">
+<li>你的電腦</li>
+</ul>
+</dd>
+<dt>SSH Server</dt>
+<dd><ul class="first last simple">
+<li>防火牆後你的機器</li>
+<li>SSH Destination： <tt class="docutils literal"><span class="pre">johnliu&#64;my-server</span></tt></li>
+</ul>
+</dd>
+<dt>Target Server</dt>
+<dd><ul class="first last simple">
+<li>防火牆後的伺服器</li>
+<li><tt class="docutils literal">192.168.1.101:8080</tt></li>
+</ul>
+</dd>
+</dl>
+<p>SSH 指令：</p>
+<div class="highlight"><pre><span></span>ssh -L 9090:192.168.1.101:8080 johnliu@my-server
+</pre></div>
+<p>這邊的 <tt class="docutils literal">192.168.1.101</tt> 是相對於 <tt class="docutils literal"><span class="pre">johnliu&#64;my-server</span></tt> ，所以是防火牆後的伺服器的 IP 位址。</p>
+</div>
+</div>
+<div class="section" id="remote-port-forwarding">
+<h2>Remote Port Forwarding</h2>
+<div class="section" id="id5">
+<h3>指令語法</h3>
+<div class="highlight"><pre><span></span>ssh -R [bind_address:]&lt;port&gt;:&lt;host&gt;:&lt;host_port&gt; &lt;SSH Server&gt;
+</pre></div>
+<p>在 <strong>SSH Server</strong> 上開啟 <tt class="docutils literal">bind_address:port</tt> 等待連線，當有人連上時，將所有資料轉送到 <tt class="docutils literal">host:host_port</tt> 去。
+<strong>注意</strong>， <tt class="docutils literal">host</tt> 是相對於 <strong>Client</strong> 的位址，而不是 <strong>SSH Server</strong> ！</p>
+</div>
+<div class="section" id="id6">
+<h3>使用情境一：透過對外機器，讓其他人能夠連到你的電腦上的服務</h3>
+<p>你在你的電腦上開發完了一個服務架在 Port 8080 上，然後你想要 Demo 給客戶看，但你的電腦只有內部 IP，所以無法讓客戶連進來：</p>
+<img alt="Remote 情境 1 示意圖 " src="https://johnliu55.tw/ssh-tunnel/images/remote_scenario1_problem.png" />
+<p>這時候只要利用 SSH Remote Forwarding，就可以藉由一台有 Internet IP 的對外機器，開啟上面的某個 Port（假設為 9090）來轉送資料到你的電腦上的 Port 8080。這樣子，客戶只要連上對外機器的 Port 9090 就等於是連上了你電腦的 Port 8080。</p>
+<img alt="Remote 情境 1 解法示意圖 " src="https://johnliu55.tw/ssh-tunnel/images/remote_scenario1_solved.png" />
+<dl class="docutils">
+<dt>Client</dt>
+<dd><ul class="first last simple">
+<li>你的電腦</li>
+</ul>
+</dd>
+<dt>SSH Server</dt>
+<dd><ul class="first last simple">
+<li>對外機器</li>
+<li>SSH Destination： <tt class="docutils literal"><span class="pre">johnliu&#64;external-server</span></tt></li>
+</ul>
+</dd>
+<dt>Target Server</dt>
+<dd><ul class="first last simple">
+<li>你的電腦</li>
+</ul>
+</dd>
+</dl>
+<p>SSH 指令：</p>
+<div class="highlight"><pre><span></span>ssh -R 0.0.0.0:9090:localhost:8080 johnliu@external-server
+</pre></div>
+<p>這邊的 <tt class="docutils literal">localhost</tt> 是相對於 <strong>Client</strong>  ，指的就是你的電腦本身。</p>
+<div class="admonition warning">
+<p class="first admonition-title">警告</p>
+<p>基於安全考量，
+<strong>Remote Forwarding 預設都只能夠 bind 在 SSH Server 的 localhost 上</strong>，所以單靠以上指令是無法讓 Port 9090 開放給外部連線的。你必須調整 SSH Server 上的 SSH 服務的設定檔（一般在 <tt class="docutils literal">/etc/ssh/sshd_config</tt> ）加入 <tt class="docutils literal">GatewayPorts</tt> 設定，才能讓所有人都連到：</p>
+<div class="highlight"><pre><span></span>GatewayPorts yes
+</pre></div>
+<p class="last">這邊有三個選項：預設為 <tt class="docutils literal">no</tt> ，也就是唯一指定 localhost；設定為 <tt class="docutils literal">yes</tt> 可以唯一指定為 wildcard（ <tt class="docutils literal">0.0.0.0</tt> ）；設定為 <tt class="docutils literal">clientspecified</tt> 可以讓啟動 Remote Forwarding 的 Client 自行指定。</p>
+</div>
+</div>
+<div class="section" id="id7">
+<h3>使用情境二：透過對外機器，從外面連回內部網路上的服務</h3>
+<p>有一個在內網裡的內部服務，你的電腦可以用 IP <tt class="docutils literal">192.168.1.100</tt>
+和 Port 8080 連到這個服務，但因為都在內網所以大家都沒有 Internet IP，所以無法讓你從家裡透過 Internet 連回來：</p>
+<img alt="Remote 情境 2 示意圖 " src="https://johnliu55.tw/ssh-tunnel/images/remote_scenario2_problem.png" />
+<p>這時候藉由 Remote Forwarding 和一台對外機器， 可以讓你從任何地方連回這個服務：</p>
+<img alt="Remote 情境 2 解法示意圖 " src="https://johnliu55.tw/ssh-tunnel/images/remote_scenario2_solved.png" />
+<dl class="docutils">
+<dt>Client</dt>
+<dd><ul class="first last simple">
+<li>你的電腦</li>
+</ul>
+</dd>
+<dt>SSH Server</dt>
+<dd><ul class="first last simple">
+<li>對外機器</li>
+<li>SSH Destination： <tt class="docutils literal"><span class="pre">johnliu&#64;external-server</span></tt></li>
+</ul>
+</dd>
+<dt>Target Server</dt>
+<dd><ul class="first last simple">
+<li>內部服務</li>
+<li><tt class="docutils literal">192.168.1.100:8080</tt></li>
+</ul>
+</dd>
+</dl>
+<p>SSH 指令：</p>
+<div class="highlight"><pre><span></span>ssh -R 0.0.0.0:9090:192.168.1.100:8080 johnliu@external-server
+</pre></div>
+<p>在這裡， <tt class="docutils literal">192.168.1.100</tt> 是相對於你的電腦，所以就算外部機器連不到這個位址也沒關係，因為是透過你的電腦做資料轉送。這樣子，只要連到對外機器上的 Port 9090 就等於是連到內部服務上的 Port 8080 了，你就能夠從外部存取內網服務。</p>
+<p>這應該是 SSH Port Forwarding 最強大的功能了！只要在網路上租一台最便宜的主機（Linode, Digital Ocean 之類的），就可以拿他來當圖示中的對外機器，來連回內部網路上的服務。不過前提是你得在有內網連線時將 Port Forwarding 設定好，如果你到家後才想到，那就請你再跑一趟吧…</p>
+</div>
+</div>
+<div class="section" id="dynamic-port-forwarding">
+<h2>Dynamic Port Forwarding</h2>
+<div class="section" id="id8">
+<h3>指令語法</h3>
+<div class="highlight"><pre><span></span>ssh -D [bind_address:]&lt;port&gt; &lt;SSH Server&gt;
+</pre></div>
+<p>在 SSH Server 上啟動一個 <a class="reference external" href="https://zh.wikipedia.org/wiki/SOCKS">SOCKS</a> 代理伺服器，同時在 <strong>Client</strong> 上開啟 <tt class="docutils literal">bind_address:port</tt> 等待連線，當有人連上時，將所有資料轉送到這個 SOCKS 代理伺服器上，啟動相對應的連線請求。</p>
+</div>
+<div class="section" id="httphttp-s">
+<h3>使用情境：建立一個 HTTP 代理伺服器連到內網的所有 HTTP(S) 服務</h3>
+<p>只要有一台位於內網且<strong>具有外部 IP</strong> 的機器，你就可以利用這個方法建立一個 HTTP 代理伺服器，讓你能夠從外面連回內網裡的所有 HTTP(S) 服務：</p>
+<img alt="Dynamic 情境示意圖 " src="https://johnliu55.tw/ssh-tunnel/images/dynamic.png" />
+<dl class="docutils">
+<dt>Client</dt>
+<dd><ul class="first last simple">
+<li>你的電腦</li>
+</ul>
+</dd>
+<dt>SSH Server</dt>
+<dd><ul class="first last simple">
+<li>內網裡具有外部 IP 的機器</li>
+</ul>
+</dd>
+<dt>Target Server</dt>
+<dd><ul class="first last simple">
+<li>N/A</li>
+</ul>
+</dd>
+</dl>
+<p>SSH 指令：</p>
+<div class="highlight"><pre><span></span>ssh -D 9090 johnliu@internal-machine
+</pre></div>
+<p>假設你是用 Linux 和 Chrome，你可以在你的電腦上用以下指令讓 Chrome 使用這個代理伺服器：</p>
+<div class="highlight"><pre><span></span>google-chrome --user-data-dir=~/proxied-chrome --proxy-server=socks5://localhost:9090
+</pre></div>
+<div class="admonition note">
+<p class="first admonition-title">註釋</p>
+<ul class="last simple">
+<li>這邊的 <tt class="docutils literal"><span class="pre">google-chrome</span></tt> 只是範例，不同的 Linux 發行版名字可能會不同</li>
+<li><tt class="docutils literal"><span class="pre">--user-data-dir</span></tt> 是為了讓 Chrome 能夠開啟一個新的 Chrome session，不加的話 <tt class="docutils literal"><span class="pre">--proxy-server</span></tt> 這個設定就沒用了</li>
+</ul>
+</div>
+<p>一般的 Port Forwarding 只能夠轉送<strong>一個 IP 上的一個 Port</strong> ，當你有很多 IP 或很多 Port 想轉時就只能一個一個開， 很不方便。相比之下，Dynamic Port Forwarding 能直接架起一個代理伺服器，只要你用的程式有支援 SOCKS 協定，透過這個代理伺服器讓你想怎麼轉就怎麼轉。不過這方式也不是沒缺點，就是那台轉送用的機器一定得要有對外 IP，這樣才能夠從你的電腦連回來。</p>
+</div>
+</div>
+<div class="section" id="id9">
+<h2>結論</h2>
+<p>從圖可以看出來，Local 跟 Remote Forwarding 的差異主要在 <strong>Port 開啟的地方</strong>：Local Forwarding 是將 Client 上的 Port 打開以供連線；Remote Forwarding 則是將 SSH Server 上的 Port 打開。另外要注意的點是轉送的目的地 <tt class="docutils literal">host</tt> ：Local Forwarding 是相對於 SSH Server，而 Remote Forwarding 則是相對於 Client。</p>
+<p>雖然 Dynamic Port Forwarding 的彈性更大，但條件就是 SSH Server 就必須要能夠從外面連回來。不過其實也是有 Workaround 啦，搭配一下 Port Forwarding 就行了，但這樣的話你有更好的 Proxy 選擇，像是 <a class="reference external" href="http://tinyproxy.github.io/">Tinyproxy</a> 等等。</p>
+<p>就寫到這邊，有問題也歡迎大家討論唷！</p>
+</div>
+<div class="section" id="references">
+<h2>References</h2>
+<ul class="simple">
+<li><a class="reference external" href="https://zh.wikipedia.org/wiki/SOCKS">SOCKS (Wiki)</a></li>
+<li><a class="reference external" href="https://www.ssh.com/ssh/tunneling/example">SSH Port Forwarding Example</a></li>
+</ul>
+</div>
+
+            <div>
+</div>
+
+            <section>
+    <p id="post-share-links">
+    Share on:
+    <a href="https://twitter.com/intent/tweet?text=SSH%20Tunneling%20%28Port%20Forwarding%29%20%E8%A9%B3%E8%A7%A3&url=https%3A//johnliu55.tw/ssh-tunnel.html&hashtags=ssh,linux,tunneling,port-forwarding" target="_blank" title="Share on Twitter">Twitter</a>
+    ❄
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A//johnliu55.tw/ssh-tunnel.html" target="_blank" title="Share on Facebook">Facebook</a>
+    ❄
+    <a href="mailto:?subject=SSH%20Tunneling%20%28Port%20Forwarding%29%20%E8%A9%B3%E8%A7%A3&amp;body=https%3A//johnliu55.tw/ssh-tunnel.html" target="_blank" title="Share via Email">Email</a>
+    </p>
+</section>
+
+            <section>
+<div class="accordion" id="accordion2">
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle disqus-comment-count" data-toggle="collapse" data-parent="#accordion2"
+                href="https://johnliu55.tw/ssh-tunnel.html#disqus_thread",
+                id="disqus-accordion-toggle">
+                Comments
+            </a>
+        </div>
+        <div id="disqus_thread" class="accordion-body collapse">
+            <div class="accordion-inner">
+                <div class="comments">
+                    <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'johnliu55tw';
+        var disqus_identifier = 'https://johnliu55.tw/ssh-tunnel.html';
+    var disqus_url = 'https://johnliu55.tw/ssh-tunnel.html';
+
+    (function() {
+         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+         dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+     })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="https://johnliu55.tw/when-pelican-meets-cjk.html" title="Previous: 用 Pelican 寫中文文章">用 Pelican 寫中文文章</a></li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time itemprop="dateCreated" datetime="2020-05-21T00:00:00+08:00">May 21, 2020</time>
+
+<h4>Last Updated</h4>
+<time datetime="2020-05-21T00:00:00+08:00">May 21, 2020</time>
+
+            <h4>Category</h4>
+            <a class="category-link" href="https://johnliu55.tw/categories.html#ssh-linux-ref">SSH, Linux</a>
+            <h4>Tags</h4>
+            <ul class="list-of-tags tags-in-article">
+                <li><a href="https://johnliu55.tw/tags#linux-ref">Linux
+                    <span>2</span>
+</a></li>
+                <li><a href="https://johnliu55.tw/tags#port-forwarding-ref">Port Forwarding
+                    <span>1</span>
+</a></li>
+                <li><a href="https://johnliu55.tw/tags#ssh-ref">SSH
+                    <span>1</span>
+</a></li>
+                <li><a href="https://johnliu55.tw/tags#tunneling-ref">Tunneling
+                    <span>1</span>
+</a></li>
+            </ul>
+<h4>Contact</h4>
+    <a href="https://github.com/johnliu55tw" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="https://www.linkedin.com/in/johnliu55tw/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+        <div id="push"></div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="https://github.com/Pelican-Elegant/elegant/" title="Theme Elegant Home Page">Elegant</a></li>
+    </ul>
+</div>
+</footer>            <script src="//code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+            <script type="text/javascript">
+var disqus_shortname = 'johnliu55tw';
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+<script  language="javascript" type="text/javascript">
+function uncollapse() {
+    if (window.location.hash.match(/^#comment-\d+$/)) {
+        $('#disqus_thread').collapse('show');
+    }
+}
+</script>
+<script type="text/javascript" language="JavaScript">
+uncollapse();
+window.onhashchange=function(){
+    if (window.location.hash.match(/^#comment-\d+$/))
+        window.location.reload(true);
+}
+</script>
+<script>
+$('#disqus_thread').on('shown', function () {
+    var link = document.getElementById('disqus-accordion-toggle');
+    var old_innerHTML = link.innerHTML;
+    $(link).fadeOut(500, function() {
+        $(this).text('Click here to hide comments').fadeIn(500);
+    });
+    $('#disqus_thread').on('hidden', function () {
+        $(link).fadeOut(500, function() {
+            $(this).text(old_innerHTML).fadeIn(500);
+        });
+    })
+})
+</script>
+
+
+    </body>
+    <!-- Theme: Elegant built for Pelican
+    License : MIT -->
+</html>
