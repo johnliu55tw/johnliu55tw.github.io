@@ -9,8 +9,8 @@ SSH Tunneling (Port Forwarding) 詳解
 :summary: 詳細解釋使用SSH的Local Port Forwarding、Remote Port Forwarding、
           和Dynamic Port Forwarding來建立加密通道（Tunneling）的方法。
 
-前陣子因為疫情的關係開始WFH，順勢就研究起了用SSH Tunneling連回內網的方法。
-一開始實在有點難理解，但了解後才發現他超級強大，
+前陣子研究了一下用SSH Tunneling來連到內部網路的方法，
+一開始實在有點難理解SSH指令與實際情況的關係，但了解後才發現他超級強大，
 於是就把細節記錄下來之後可以參考，也希望能幫大家了解一下這東西。
 
 *****************************************
