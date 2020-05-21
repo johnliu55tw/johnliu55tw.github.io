@@ -10,25 +10,26 @@ SSH Tunneling (Port Forwarding) 詳解
           和Dynamic Port Forwarding來建立加密通道（Tunneling）的方法。
 
 前陣子因為疫情的關係開始WFH，順勢就研究起了用SSH建立加密連線通道的方式，
-然後才發現他實在是超級強大，就把一些眉眉角角給記錄下來，之後可以拿來參考一下。
-
-這篇文是針對SSH Tunneling所寫，所以假設你對SSH有一定的了解。
-如果你還不太熟悉SSH是什麼，建議先了解相關知識再來看唷！
+然後才發現他超級強大，但實在有點難理解怎麼下指令，
+於是就把細節記錄下來，之後可以拿來參考一下。
 
 *****************************************
 什麼是SSH Tunneling (Port Forwarding)？
 *****************************************
 
 Tunneling通常指的是將網路上的A、B兩個端點，用某種方式連接起來形成一個隧道，
-讓A、B兩端的通訊能夠穿透某些限制（例如防火牆），
-或是能將通訊內容加密避免資訊洩漏。
+讓A、B兩端的通訊能夠穿透某些限制（例如防火牆），或是能將通訊內容加密避免洩漏。
 而SSH Tunneling指的就是利用SSH協定建立這個隧道，所以不但能加密你的通訊，
 如果A、B之間設有防火牆擋掉某些特定Port的連線（例如HTTP/HTTPS的80/443），
-SSH Tunneling也會讓防火牆認為這只是一般的SSH連線，進而達到「穿透」的效果。
+SSH Tunneling也會讓防火牆認為這只是一般的SSH連線，
+進而達到「穿透防火牆」的效果。
 
 另外，因為SSH Tunneling的目標是兩個端點上的Port，
-而且通訊過程就像是把對A點上的某個Port所傳送的資料「轉送」至B點上的某個Port，
-所以SSH Tunneling又稱為 **SSH Port Forwarding** 。
+而且通訊過程就像是把對A點上的某個Port X所傳送的資料 **轉送**
+（Forward）至B點上的Port Y，所以SSH Tunneling又稱為 **SSH Port Forwarding** 。
+
+.. image:: {static}images/tunneling.png
+   :alt: Tunneling示意圖
 
 SSH Port Forwarding有下列三種模式：
 
@@ -36,7 +37,8 @@ SSH Port Forwarding有下列三種模式：
 - Remote Port Forwarding
 - Dynamic Port Forwarding
 
-接下來會一一說明。首先先來看看SSH Port Forwarding中參與的角色有哪些。
+接下來會一一說明各種模式。
+先來看看在SSH Port Forwarding當中參與的角色有哪些。
 
 ***************************
 Port Fowarding 裡的角色定義
@@ -84,8 +86,8 @@ Local Port Forwarding
    :alt: 情境1示意圖
 
 這時候只要你能夠SSH到那台伺服器，
-就可以利用Local Port Forwarding來把你電腦上的某個Port（假設為9090）
-將資料轉發（Forward）到伺服器的Port 8080。
+就可以利用Local Port Forwarding來開啟你電腦上的某個Port（假設為9090），
+將對它發送的資料轉送到伺服器的Port 8080。
 這樣一來， 連上你的電腦的Port 9090就等於連上了防火牆後的伺服器的Port 8080 ，
 也就繞過了防火牆的限制。
 
@@ -186,9 +188,10 @@ Remote Port Forwarding
 .. image:: {static}images/remote_scenario1_problem.png
    :alt: Remote情境1示意圖
 
-這時候利用SSH Remote Forwarding，
-就可以藉由一台有Internet IP的對外機器，將上面的某個Port（假設為9090），
-讓客戶連到你的電腦上Port 8080的服務。
+這時候只要利用SSH Remote Forwarding，
+就可以藉由一台有Internet IP的對外機器，開啟上面的某個Port（假設為9090）
+來轉送資料到你的電腦上的Port 8080。
+這樣子，客戶只要連上對外機器的Port 9090就等於是連上了你電腦的Port 8080。
 
 .. image:: {static}images/remote_scenario1_solved.png
    :alt: Remote情境1解法示意圖
@@ -210,8 +213,6 @@ SSH指令：
     ssh -R 0.0.0.0:9090:localhost:8080 johnliu@external-server
 
 這邊的 ``localhost`` 是相對於 **Client**  ，指的就是你的電腦本身。
-接著，當客戶連上對外機器的Port 9090，就等於是連上了你的電腦的Port 8080，
-這樣一來就可以將你的服務對外開放。
 
 .. warning::
 
@@ -263,14 +264,14 @@ SSH指令：
 
 在這裡， ``192.168.1.100`` 是相對於你的電腦，所以就算外部機器連不到這個位址
 也沒關係，因為是透過你的電腦做資料轉送。
-這樣子，只要連到 ``external-server:9090`` 就等於是連到內網的服務
-``192.168.1.100:8080`` 。
+這樣子，只要連到對外機器上的Port 9090就等於是連到內部服務上的Port 8080了，
+你就能夠從外部存取內網服務。
 
 這應該是SSH Port Forwarding最強大的功能了！只要在網路上租一台最便宜的主機
-（Linode, Digital Ocean之類的），你就可以拿他來當跳板，
-透過這邊提到的方式來連回內部網路上的服務。
-不過前題是你得在有內網連線時將Port Forwarding設定好，
-如果你到家後才想到，那就請你回公司一趟吧…
+（Linode, Digital Ocean之類的），就可以拿他來當圖示中的對外機器，
+來連回內部網路上的服務。
+不過前提是你得在有內網連線時將Port Forwarding設定好，
+如果你到家後才想到，那就請你再跑一趟吧…
 
 ***********************
 Dynamic Port Forwarding
@@ -328,7 +329,7 @@ SSH指令：
 一般的Port Forwarding只能夠轉送 **一個IP上的一個Port** ，
 當你有很多IP或很多Port想轉時就只能一個一個開， 很不方便。
 相比之下，Dynamic Port Forwarding能直接架起一個代理伺服器，
-只要你的Client有支援SOCKS協定，透過這個代理伺服器讓你想怎麼轉就怎麼轉。
+只要你用的程式有支援SOCKS協定，透過這個代理伺服器讓你想怎麼轉就怎麼轉。
 不過這方式也不是沒缺點，就是那台轉送用的機器一定得要有對外IP，
 這樣才能夠從你的電腦連回來。
 
