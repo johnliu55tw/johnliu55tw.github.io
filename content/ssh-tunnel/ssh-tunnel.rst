@@ -2,8 +2,8 @@
 SSH Tunneling (Port Forwarding) 詳解
 ####################################
 
-:date: 2020-04-25
-:modified: 2020-04-25
+:date: 2020-05-21
+:modified: 2020-05-21
 :category: SSH, Linux
 :tags: SSH, Linux, Tunneling, Port Forwarding
 :summary: 詳細解釋使用SSH的Local Port Forwarding、Remote Port Forwarding、
@@ -336,9 +336,18 @@ SSH指令：
 結論
 ****
 
-- Remote 跟 Local 差在方向的不同
-- Dynamic 很好用，前提是你連的回去
-- 可以搭配VPN使用，效果更佳
+從圖可以看出來，Local跟Remote Forwarding的差異主要在 **Port開啟的地方** ：
+Local Forwarding是將Client上的Port打開以供連線；
+Remote Forwarding則是將SSH Server上的Port打開。
+另外要注意的點是轉送的目的地 ``host`` ：Local Forwarding是相對於SSH Server，
+而Remote Forwarding則是相對於Client。
+
+雖然Dynamic Port Forwarding的彈性更大，
+但條件就是SSH Server就必須要能夠從外面連回來。
+不過其實也是有Workaround啦，搭配一下Port Forwarding就行了，
+但這樣的話你有更好的Proxy選擇，像是 `Tinyproxy`_ 等等。
+
+就寫到這邊，有問題也歡迎大家討論唷！
 
 **********
 References
@@ -351,3 +360,5 @@ References
 .. _SOCKS: https://zh.wikipedia.org/wiki/SOCKS
 
 .. _SSH Port Forwarding Example: https://www.ssh.com/ssh/tunneling/example
+
+.. _Tinyproxy: http://tinyproxy.github.io/
