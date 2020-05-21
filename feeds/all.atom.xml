@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom"><title>John Engineering Stuff</title><link href="https://johnliu55.tw/" rel="alternate"></link><link href="https://johnliu55.tw/feeds/all.atom.xml" rel="self"></link><id>https://johnliu55.tw/</id><updated>2020-05-21T00:00:00+08:00</updated><entry><title>SSH Tunneling (Port Forwarding) 詳解</title><link href="https://johnliu55.tw/ssh-tunnel.html" rel="alternate"></link><published>2020-05-21T00:00:00+08:00</published><updated>2020-05-21T00:00:00+08:00</updated><author><name>John Liu</name></author><id>tag:johnliu55.tw,2020-05-21:/ssh-tunnel.html</id><summary type="html">&lt;p class="first last"&gt;詳細解釋使用SSH的Local Port Forwarding、Remote Port Forwarding、
 和Dynamic Port Forwarding來建立加密通道（Tunneling）的方法。&lt;/p&gt;
-</summary><content type="html">&lt;p&gt;前陣子因為疫情的關係開始 WFH，順勢就研究起了用 SSH Tunneling 連回內網的方法。一開始實在有點難理解，但了解後才發現他超級強大，於是就把細節記錄下來之後可以參考，也希望能幫大家了解一下這東西。&lt;/p&gt;
+</summary><content type="html">&lt;p&gt;前陣子研究了一下用 SSH Tunneling 來連到內部網路的方法，一開始實在有點難理解 SSH 指令與實際情況的關係，但了解後才發現他超級強大，於是就把細節記錄下來之後可以參考，也希望能幫大家了解一下這東西。&lt;/p&gt;
 &lt;div class="section" id="id1"&gt;
 &lt;h2&gt;什麼是 SSH Tunneling (Port Forwarding)？&lt;/h2&gt;
 &lt;p&gt;Tunneling 指的是將網路上的 A、B 兩個端點用某種方式連接起來，形成一個「隧道」，讓兩端的通訊能夠穿透某些限制（例如防火牆），或是能將通訊內容加密避免洩漏。而 SSH Tunneling 就是指利用 SSH 協定來建立這個隧道，所以不但能加密你的通訊，如果中間設有防火牆擋掉某些特定 Port 的連線（例如 HTTP/HTTPS 的 80/443）而沒有擋下 SSH 的 Port 22，這個隧道便會讓防火牆認為是只是一般的 SSH 連線，進而放行，也就達到了「穿透防火牆」的效果。&lt;/p&gt;
