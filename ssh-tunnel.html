@@ -82,11 +82,11 @@
         <div class="span8 offset2 article-content">
 
             
-            <p>前陣子因為疫情的關係開始 WFH，順勢就研究起了用 SSH 建立加密連線通道的方式，然後才發現他超級強大，但實在有點難理解怎麼下指令，於是就把細節記錄下來，之後可以拿來參考一下。</p>
+            <p>前陣子因為疫情的關係開始 WFH，順勢就研究起了用 SSH Tunneling 連回內網的方法。一開始實在有點難理解，但了解後才發現他超級強大，於是就把細節記錄下來之後可以參考，也希望能幫大家了解一下這東西。</p>
 <div class="section" id="id1">
 <h2>什麼是 SSH Tunneling (Port Forwarding)？</h2>
-<p>Tunneling 通常指的是將網路上的 A、B 兩個端點，用某種方式連接起來形成一個隧道，讓 A、B 兩端的通訊能夠穿透某些限制（例如防火牆），或是能將通訊內容加密避免洩漏。而 SSH Tunneling 指的就是利用 SSH 協定建立這個隧道，所以不但能加密你的通訊，如果 A、B 之間設有防火牆擋掉某些特定 Port 的連線（例如 HTTP/HTTPS 的 80/443），SSH Tunneling 也會讓防火牆認為這只是一般的 SSH 連線，進而達到「穿透防火牆」的效果。</p>
-<p>另外，因為 SSH Tunneling 的目標是兩個端點上的 Port，而且通訊過程就像是把對 A 點上的某個 Port X 所傳送的資料<strong>轉送</strong>
+<p>Tunneling 指的是將網路上的 A、B 兩個端點用某種方式連接起來，形成一個「隧道」，讓兩端的通訊能夠穿透某些限制（例如防火牆），或是能將通訊內容加密避免洩漏。而 SSH Tunneling 就是指利用 SSH 協定來建立這個隧道，所以不但能加密你的通訊，如果中間設有防火牆擋掉某些特定 Port 的連線（例如 HTTP/HTTPS 的 80/443）而沒有擋下 SSH 的 Port 22，這個隧道便會讓防火牆認為是只是一般的 SSH 連線，進而放行，也就達到了「穿透防火牆」的效果。</p>
+<p>另外，因為 SSH Tunneling 的目標是兩個端點上的 Port，而過程就像是把對 A 點上的某個 Port X 所傳送的資料<strong>轉送</strong>
 （Forward）至 B 點上的 Port Y，所以 SSH Tunneling 又稱為 <strong>SSH Port Forwarding</strong> 。</p>
 <img alt="Tunneling 示意圖 " src="https://johnliu55.tw/ssh-tunnel/images/tunneling.png" />
 <p>SSH Port Forwarding 有下列三種模式：</p>
@@ -119,6 +119,7 @@
 </dd>
 </dl>
 <p>而 Dynamic Port Forwarding 比較不一樣，在於 Target Server 不會只有一台，而是可以被動態決定的。</p>
+<p>了解了這三個角色，那就先來看看 Local Port Forwarding 是怎麼回事。</p>
 </div>
 <div class="section" id="local-port-forwarding">
 <h2>Local Port Forwarding</h2>
