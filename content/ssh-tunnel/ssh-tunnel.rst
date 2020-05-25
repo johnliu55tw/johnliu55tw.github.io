@@ -3,11 +3,16 @@ SSH Tunneling (Port Forwarding) 詳解
 ####################################
 
 :date: 2020-05-21
-:modified: 2020-05-21
+:modified: 2020-05-25
 :category: SSH, Linux
 :tags: SSH, Linux, Tunneling, Port Forwarding
 :summary: 詳細解釋使用SSH的Local Port Forwarding、Remote Port Forwarding、
           和Dynamic Port Forwarding來建立加密通道（Tunneling）的方法。
+
+.. admonition:: 變更記錄
+
+   2020-05-25
+      加入「小技巧和工具」章節來放各種SSH Tunneling的小技巧和工具。
 
 前陣子研究了一下用SSH Tunneling來連到內部網路的方法，
 一開始實在有點難理解SSH指令與實際情況的關係，但了解後才發現他超級強大，
@@ -351,6 +356,70 @@ Remote Forwarding則是將SSH Server上的Port打開。
 但這樣的話你有更好的Proxy選擇，像是 `Tinyproxy`_ 等等。
 
 就寫到這邊，有問題也歡迎大家討論唷！
+
+******************
+補充：小技巧和工具
+******************
+
+這邊放一些大家在使用SSH Tunneling上的小技巧和工具，但細節就請大家自行Google囉。
+
+常用的SSH指令參數
+=================
+
+``-N``
+    不要執行任何遠端指令。沒有加這個參數時，建立Port Forwarding的同時也會開啟
+    Remote Shell，讓你可以對SSH Server下指令，而這個參數可以讓Remote Shell
+    不要打開。
+
+``-f``
+    讓 ``ssh`` 指令在背景執行，讓你可以繼續用Shell做事情。通常會搭上面的
+    ``-N`` 使用。
+
+常用的SSH Client端設定
+======================
+
+.. note::
+
+    設定檔通常在 ``~/.ssh/config`` 或是 ``/etc/ssh/ssh_config``。
+
+``ServerAliveInterval``
+    設定一段時間，如果Client在這段時間內都沒從SSH Server收到資料，
+    就發出一段訊息請SSH Server回應。這會讓連線不會呈現閒置狀態，
+    避免防火牆或Router切斷你的連線。預設為 ``0`` ，不會發出任何訊息。
+
+``ServerAliveCountMax``
+    設定在SSH Server沒回應的情況下，Client最多要送幾次請求回應的訊息
+    （上面提到的那個）。達到此次數後，Client就會切斷與SSH Server之間的連線。
+    這個主要是避免在SSH Server已經無法連線後，
+    Client還不斷送出請求回應的情況。預設為 ``3`` 。
+
+
+autossh：自動重啟SSH連線
+========================
+
+`autossh <https://linux.die.net/man/1/autossh>`_
+是一支可以幫你監控SSH連線狀態並自動重連的程式。如果你的網路狀況很糟糕，
+或是防火牆會三不五時把你斷線，他可以幫你自動重啟連線。
+
+Fail2Ban：阻擋不明連線
+======================
+
+`Fail2Ban <https://www.fail2ban.org/wiki/index.php/Main_Page>`_
+可以幫你阻擋不明連線，原理就是去監看SSH服務的log來偵測登入失敗的IP，
+然後在這些IP的失敗次數達到一定值時，利用防火牆來暫時停止該IP的連線請求，
+過一定時間後再恢復。可以拿來擋掉最基本的暴力攻擊。
+
+如果你租了線上主機來玩，建議最少要裝Fail2Ban來保護你的SSH Server。
+
+Port Knocking：有條件的開啟SSH Port
+===================================
+
+`Port Knocking <https://en.wikipedia.org/wiki/Port_knocking>`_
+指的是Client必須用特殊的順序來對SSH Server上的某些Port發出連線請求後，
+SSH Server才會開放Client連線的技巧（比如依序對Port 1000、2000、3000發出請求，
+才會對你開放Port 22）。這樣的好處是平時Port 22就會是關閉的狀態，
+讓攻擊者以為SSH沒有開放，減少被攻擊的機會。我沒用過，但看起來會搭配其他服務（
+像 `knockd <https://linux.die.net/man/1/knockd>`_ ）一起用。
 
 **********
 References
