@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>John Engineering Stuff - SSH, Linux</title><link href="https://johnliu55.tw/" rel="alternate"></link><link href="https://johnliu55.tw/feeds/ssh-linux.atom.xml" rel="self"></link><id>https://johnliu55.tw/</id><updated>2020-05-21T00:00:00+08:00</updated><entry><title>SSH Tunneling (Port Forwarding) 詳解</title><link href="https://johnliu55.tw/ssh-tunnel.html" rel="alternate"></link><published>2020-05-21T00:00:00+08:00</published><updated>2020-05-21T00:00:00+08:00</updated><author><name>John Liu</name></author><id>tag:johnliu55.tw,2020-05-21:/ssh-tunnel.html</id><summary type="html">&lt;p class="first last"&gt;詳細解釋使用SSH的Local Port Forwarding、Remote Port Forwarding、
+<feed xmlns="http://www.w3.org/2005/Atom"><title>John Engineering Stuff - SSH, Linux</title><link href="https://johnliu55.tw/" rel="alternate"></link><link href="https://johnliu55.tw/feeds/ssh-linux.atom.xml" rel="self"></link><id>https://johnliu55.tw/</id><updated>2020-05-25T00:00:00+08:00</updated><entry><title>SSH Tunneling (Port Forwarding) 詳解</title><link href="https://johnliu55.tw/ssh-tunnel.html" rel="alternate"></link><published>2020-05-21T00:00:00+08:00</published><updated>2020-05-25T00:00:00+08:00</updated><author><name>John Liu</name></author><id>tag:johnliu55.tw,2020-05-21:/ssh-tunnel.html</id><summary type="html">&lt;p class="first last"&gt;詳細解釋使用SSH的Local Port Forwarding、Remote Port Forwarding、
 和Dynamic Port Forwarding來建立加密通道（Tunneling）的方法。&lt;/p&gt;
-</summary><content type="html">&lt;p&gt;前陣子研究了一下用 SSH Tunneling 來連到內部網路的方法，一開始實在有點難理解 SSH 指令與實際情況的關係，但了解後才發現他超級強大，於是就把細節記錄下來之後可以參考，也希望能幫大家了解一下這東西。&lt;/p&gt;
+</summary><content type="html">&lt;div class="admonition admonition-"&gt;
+&lt;p class="first admonition-title"&gt;變更記錄&lt;/p&gt;
+&lt;dl class="last docutils"&gt;
+&lt;dt&gt;2020-05-25&lt;/dt&gt;
+&lt;dd&gt;加入「小技巧和工具」章節來放各種 SSH Tunneling 的小技巧和工具。&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/div&gt;
+&lt;p&gt;前陣子研究了一下用 SSH Tunneling 來連到內部網路的方法，一開始實在有點難理解 SSH 指令與實際情況的關係，但了解後才發現他超級強大，於是就把細節記錄下來之後可以參考，也希望能幫大家了解一下這東西。&lt;/p&gt;
 &lt;div class="section" id="id1"&gt;
 &lt;h2&gt;什麼是 SSH Tunneling (Port Forwarding)？&lt;/h2&gt;
 &lt;p&gt;Tunneling 指的是將網路上的 A、B 兩個端點用某種方式連接起來，形成一個「隧道」，讓兩端的通訊能夠穿透某些限制（例如防火牆），或是能將通訊內容加密避免洩漏。而 SSH Tunneling 就是指利用 SSH 協定來建立這個隧道，所以不但能加密你的通訊，如果中間設有防火牆擋掉某些特定 Port 的連線（例如 HTTP/HTTPS 的 80/443）而沒有擋下 SSH 的 Port 22，這個隧道便會讓防火牆認為是只是一般的 SSH 連線，進而放行，也就達到了「穿透防火牆」的效果。&lt;/p&gt;
@@ -251,6 +258,51 @@
 &lt;p&gt;從圖可以看出來，Local 跟 Remote Forwarding 的差異主要在 &lt;strong&gt;Port 開啟的地方&lt;/strong&gt;：Local Forwarding 是將 Client 上的 Port 打開以供連線；Remote Forwarding 則是將 SSH Server 上的 Port 打開。另外要注意的點是轉送的目的地 &lt;tt class="docutils literal"&gt;host&lt;/tt&gt; ：Local Forwarding 是相對於 SSH Server，而 Remote Forwarding 則是相對於 Client。&lt;/p&gt;
 &lt;p&gt;雖然 Dynamic Port Forwarding 的彈性更大，但條件就是 SSH Server 就必須要能夠從外面連回來。不過其實也是有 Workaround 啦，搭配一下 Port Forwarding 就行了，但這樣的話你有更好的 Proxy 選擇，像是 &lt;a class="reference external" href="http://tinyproxy.github.io/"&gt;Tinyproxy&lt;/a&gt; 等等。&lt;/p&gt;
 &lt;p&gt;就寫到這邊，有問題也歡迎大家討論唷！&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id10"&gt;
+&lt;h2&gt;補充：小技巧和工具&lt;/h2&gt;
+&lt;p&gt;這邊放一些大家在使用 SSH Tunneling 上的小技巧和工具，但細節就請大家自行 Google 囉。&lt;/p&gt;
+&lt;div class="section" id="ssh"&gt;
+&lt;h3&gt;常用的 SSH 指令參數&lt;/h3&gt;
+&lt;dl class="docutils"&gt;
+&lt;dt&gt;&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;-N&lt;/span&gt;&lt;/tt&gt;&lt;/dt&gt;
+&lt;dd&gt;不要執行任何遠端指令。沒有加這個參數時，建立 Port Forwarding 的同時也會開啟
+Remote Shell，讓你可以對 SSH Server 下指令，而這個參數可以讓 Remote Shell
+不要打開。&lt;/dd&gt;
+&lt;dt&gt;&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;-f&lt;/span&gt;&lt;/tt&gt;&lt;/dt&gt;
+&lt;dd&gt;讓 &lt;tt class="docutils literal"&gt;ssh&lt;/tt&gt; 指令在背景執行，讓你可以繼續用 Shell 做事情。通常會搭上面的
+&lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;-N&lt;/span&gt;&lt;/tt&gt; 使用。&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/div&gt;
+&lt;div class="section" id="ssh-client"&gt;
+&lt;h3&gt;常用的 SSH Client 端設定&lt;/h3&gt;
+&lt;div class="admonition note"&gt;
+&lt;p class="first admonition-title"&gt;註釋&lt;/p&gt;
+&lt;p class="last"&gt;設定檔通常在 &lt;tt class="docutils literal"&gt;&lt;span class="pre"&gt;~/.ssh/config&lt;/span&gt;&lt;/tt&gt; 或是 &lt;tt class="docutils literal"&gt;/etc/ssh/ssh_config&lt;/tt&gt;。&lt;/p&gt;
+&lt;/div&gt;
+&lt;dl class="docutils"&gt;
+&lt;dt&gt;&lt;tt class="docutils literal"&gt;ServerAliveInterval&lt;/tt&gt;&lt;/dt&gt;
+&lt;dd&gt;設定一段時間，如果 Client 在這段時間內都沒從 SSH Server 收到資料，就發出一段訊息請 SSH Server 回應。這會讓連線不會呈現閒置狀態，避免防火牆或 Router 切斷你的連線。預設為 &lt;tt class="docutils literal"&gt;0&lt;/tt&gt; ，不會發出任何訊息。&lt;/dd&gt;
+&lt;dt&gt;&lt;tt class="docutils literal"&gt;ServerAliveCountMax&lt;/tt&gt;&lt;/dt&gt;
+&lt;dd&gt;設定在 SSH Server 沒回應的情況下，Client 最多要送幾次請求回應的訊息（上面提到的那個）。達到此次數後，Client 就會切斷與 SSH Server 之間的連線。這個主要是避免在 SSH Server 已經無法連線後，Client 還不斷送出請求回應的情況。預設為 &lt;tt class="docutils literal"&gt;3&lt;/tt&gt; 。&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/div&gt;
+&lt;div class="section" id="autossh-ssh"&gt;
+&lt;h3&gt;autossh：自動重啟 SSH 連線&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://linux.die.net/man/1/autossh"&gt;autossh&lt;/a&gt;
+是一支可以幫你監控 SSH 連線狀態並自動重連的程式。如果你的網路狀況很糟糕，或是防火牆會三不五時把你斷線，他可以幫你自動重啟連線。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="fail2ban"&gt;
+&lt;h3&gt;Fail2Ban：阻擋不明連線&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://www.fail2ban.org/wiki/index.php/Main_Page"&gt;Fail2Ban&lt;/a&gt;
+可以幫你阻擋不明連線，原理就是去監看 SSH 服務的 log 來偵測登入失敗的 IP，然後在這些 IP 的失敗次數達到一定值時，利用防火牆來暫時停止該 IP 的連線請求，過一定時間後再恢復。可以拿來擋掉最基本的暴力攻擊。&lt;/p&gt;
+&lt;p&gt;如果你租了線上主機來玩，建議最少要裝 Fail2Ban 來保護你的 SSH Server。&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="section" id="port-knocking-ssh-port"&gt;
+&lt;h3&gt;Port Knocking：有條件的開啟 SSH Port&lt;/h3&gt;
+&lt;p&gt;&lt;a class="reference external" href="https://en.wikipedia.org/wiki/Port_knocking"&gt;Port Knocking&lt;/a&gt;
+指的是 Client 必須用特殊的順序來對 SSH Server 上的某些 Port 發出連線請求後，SSH Server 才會開放 Client 連線的技巧（比如依序對 Port 1000、2000、3000 發出請求，才會對你開放 Port 22）。這樣的好處是平時 Port 22 就會是關閉的狀態，讓攻擊者以為 SSH 沒有開放，減少被攻擊的機會。我沒用過，但看起來會搭配其他服務（像 &lt;a class="reference external" href="https://linux.die.net/man/1/knockd"&gt;knockd&lt;/a&gt; ）一起用。&lt;/p&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;div class="section" id="references"&gt;
 &lt;h2&gt;References&lt;/h2&gt;

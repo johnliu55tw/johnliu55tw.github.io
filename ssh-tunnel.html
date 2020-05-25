@@ -17,19 +17,20 @@
 <meta property="og:site_name" content="John Engineering Stuff" />
 <meta property="og:article:author" content="John Liu" />
 <meta property="og:article:published_time" content="2020-05-21T00:00:00+08:00" />
-<meta property="og:article:modified_time" content="2020-05-21T00:00:00+08:00" />
+<meta property="og:article:modified_time" content="2020-05-25T00:00:00+08:00" />
 <meta name="twitter:title" content="SSH Tunneling (Port Forwarding) 詳解 ">
 <meta name="twitter:description" content="詳細解釋使用SSH的Local Port Forwarding、Remote Port Forwarding、 和Dynamic Port Forwarding來建立加密通道（Tunneling）的方法。">
 
         <title>SSH Tunneling (Port Forwarding) 詳解  · John Engineering Stuff
 </title>
         <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
-        <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/css/pygments.css" media="screen">
         <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/tipuesearch/tipuesearch.css" media="screen">
         <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/css/elegant.css" media="screen">
         <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/css/admonition.css" media="screen">
         <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/css/custom.css" media="screen">
+
         <link href="https://johnliu55.tw/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="John Engineering Stuff - Full Atom Feed" />
 <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -41,36 +42,35 @@
 </script>
 
 
-
     </head>
     <body>
-        <div id="content-sans-footer">
-        <div class="navbar navbar-static-top">
-            <div class="navbar-inner">
-                <div class="container-fluid">
-                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </a>
-                    <a class="brand" href="https://johnliu55.tw/"><span class=site-name>John Engineering Stuff</span></a>
-                    <div class="nav-collapse collapse">
-                        <ul class="nav pull-right top-menu">
-                            <li ><a href="https://johnliu55.tw">Home</a></li>
-                            <li ><a href="https://johnliu55.tw/pages/about.html">About</a></li>
-                            <li ><a href="https://johnliu55.tw/categories">Categories</a></li>
-                            <li ><a href="https://johnliu55.tw/tags">Tags</a></li>
-                            <li ><a href="https://johnliu55.tw/archives">Archives</a></li>
-                            <li><form class="navbar-search" action="https://johnliu55.tw/search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
-                        </ul>
+        <div id="content">
+            <div class="navbar navbar-static-top">
+                <div class="navbar-inner">
+                    <div class="container-fluid">
+                        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </a>
+                        <a class="brand" href="https://johnliu55.tw/"><span class=site-name>John Engineering Stuff</span></a>
+                        <div class="nav-collapse collapse">
+                            <ul class="nav pull-right top-menu">
+                                <li ><a href="https://johnliu55.tw">Home</a></li>
+                                <li ><a href="https://johnliu55.tw/pages/about.html">About</a></li>
+                                <li ><a href="https://johnliu55.tw/categories">Categories</a></li>
+                                <li ><a href="https://johnliu55.tw/tags">Tags</a></li>
+                                <li ><a href="https://johnliu55.tw/archives">Archives</a></li>
+                                <li><form class="navbar-search" action="https://johnliu55.tw/search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="container-fluid">
-            <div class="row-fluid">
-                <div class="span1"></div>
-                <div class="span10">
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span1"></div>
+                    <div class="span10">
 <article itemscope>
 <div class="row-fluid">
     <header class="page-header span10 offset2">
@@ -80,9 +80,15 @@
 
 <div class="row-fluid">
         <div class="span8 offset2 article-content">
-
             
-            <p>前陣子研究了一下用 SSH Tunneling 來連到內部網路的方法，一開始實在有點難理解 SSH 指令與實際情況的關係，但了解後才發現他超級強大，於是就把細節記錄下來之後可以參考，也希望能幫大家了解一下這東西。</p>
+            <div class="admonition admonition-">
+<p class="first admonition-title">變更記錄</p>
+<dl class="last docutils">
+<dt>2020-05-25</dt>
+<dd>加入「小技巧和工具」章節來放各種 SSH Tunneling 的小技巧和工具。</dd>
+</dl>
+</div>
+<p>前陣子研究了一下用 SSH Tunneling 來連到內部網路的方法，一開始實在有點難理解 SSH 指令與實際情況的關係，但了解後才發現他超級強大，於是就把細節記錄下來之後可以參考，也希望能幫大家了解一下這東西。</p>
 <div class="section" id="id1">
 <h2>什麼是 SSH Tunneling (Port Forwarding)？</h2>
 <p>Tunneling 指的是將網路上的 A、B 兩個端點用某種方式連接起來，形成一個「隧道」，讓兩端的通訊能夠穿透某些限制（例如防火牆），或是能將通訊內容加密避免洩漏。而 SSH Tunneling 就是指利用 SSH 協定來建立這個隧道，所以不但能加密你的通訊，如果中間設有防火牆擋掉某些特定 Port 的連線（例如 HTTP/HTTPS 的 80/443）而沒有擋下 SSH 的 Port 22，這個隧道便會讓防火牆認為是只是一般的 SSH 連線，進而放行，也就達到了「穿透防火牆」的效果。</p>
@@ -333,6 +339,51 @@
 <p>雖然 Dynamic Port Forwarding 的彈性更大，但條件就是 SSH Server 就必須要能夠從外面連回來。不過其實也是有 Workaround 啦，搭配一下 Port Forwarding 就行了，但這樣的話你有更好的 Proxy 選擇，像是 <a class="reference external" href="http://tinyproxy.github.io/">Tinyproxy</a> 等等。</p>
 <p>就寫到這邊，有問題也歡迎大家討論唷！</p>
 </div>
+<div class="section" id="id10">
+<h2>補充：小技巧和工具</h2>
+<p>這邊放一些大家在使用 SSH Tunneling 上的小技巧和工具，但細節就請大家自行 Google 囉。</p>
+<div class="section" id="ssh">
+<h3>常用的 SSH 指令參數</h3>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">-N</span></tt></dt>
+<dd>不要執行任何遠端指令。沒有加這個參數時，建立 Port Forwarding 的同時也會開啟
+Remote Shell，讓你可以對 SSH Server 下指令，而這個參數可以讓 Remote Shell
+不要打開。</dd>
+<dt><tt class="docutils literal"><span class="pre">-f</span></tt></dt>
+<dd>讓 <tt class="docutils literal">ssh</tt> 指令在背景執行，讓你可以繼續用 Shell 做事情。通常會搭上面的
+<tt class="docutils literal"><span class="pre">-N</span></tt> 使用。</dd>
+</dl>
+</div>
+<div class="section" id="ssh-client">
+<h3>常用的 SSH Client 端設定</h3>
+<div class="admonition note">
+<p class="first admonition-title">註釋</p>
+<p class="last">設定檔通常在 <tt class="docutils literal"><span class="pre">~/.ssh/config</span></tt> 或是 <tt class="docutils literal">/etc/ssh/ssh_config</tt>。</p>
+</div>
+<dl class="docutils">
+<dt><tt class="docutils literal">ServerAliveInterval</tt></dt>
+<dd>設定一段時間，如果 Client 在這段時間內都沒從 SSH Server 收到資料，就發出一段訊息請 SSH Server 回應。這會讓連線不會呈現閒置狀態，避免防火牆或 Router 切斷你的連線。預設為 <tt class="docutils literal">0</tt> ，不會發出任何訊息。</dd>
+<dt><tt class="docutils literal">ServerAliveCountMax</tt></dt>
+<dd>設定在 SSH Server 沒回應的情況下，Client 最多要送幾次請求回應的訊息（上面提到的那個）。達到此次數後，Client 就會切斷與 SSH Server 之間的連線。這個主要是避免在 SSH Server 已經無法連線後，Client 還不斷送出請求回應的情況。預設為 <tt class="docutils literal">3</tt> 。</dd>
+</dl>
+</div>
+<div class="section" id="autossh-ssh">
+<h3>autossh：自動重啟 SSH 連線</h3>
+<p><a class="reference external" href="https://linux.die.net/man/1/autossh">autossh</a>
+是一支可以幫你監控 SSH 連線狀態並自動重連的程式。如果你的網路狀況很糟糕，或是防火牆會三不五時把你斷線，他可以幫你自動重啟連線。</p>
+</div>
+<div class="section" id="fail2ban">
+<h3>Fail2Ban：阻擋不明連線</h3>
+<p><a class="reference external" href="https://www.fail2ban.org/wiki/index.php/Main_Page">Fail2Ban</a>
+可以幫你阻擋不明連線，原理就是去監看 SSH 服務的 log 來偵測登入失敗的 IP，然後在這些 IP 的失敗次數達到一定值時，利用防火牆來暫時停止該 IP 的連線請求，過一定時間後再恢復。可以拿來擋掉最基本的暴力攻擊。</p>
+<p>如果你租了線上主機來玩，建議最少要裝 Fail2Ban 來保護你的 SSH Server。</p>
+</div>
+<div class="section" id="port-knocking-ssh-port">
+<h3>Port Knocking：有條件的開啟 SSH Port</h3>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Port_knocking">Port Knocking</a>
+指的是 Client 必須用特殊的順序來對 SSH Server 上的某些 Port 發出連線請求後，SSH Server 才會開放 Client 連線的技巧（比如依序對 Port 1000、2000、3000 發出請求，才會對你開放 Port 22）。這樣的好處是平時 Port 22 就會是關閉的狀態，讓攻擊者以為 SSH 沒有開放，減少被攻擊的機會。我沒用過，但看起來會搭配其他服務（像 <a class="reference external" href="https://linux.die.net/man/1/knockd">knockd</a> ）一起用。</p>
+</div>
+</div>
 <div class="section" id="references">
 <h2>References</h2>
 <ul class="simple">
@@ -342,6 +393,8 @@
 <li><a class="reference external" href="https://www.booleanworld.com/guide-ssh-port-forwarding-tunnelling/">A Guide to SSH Port Forwarding/Tunnelling</a></li>
 </ul>
 </div>
+
+
 
             <div>
 </div>
@@ -407,7 +460,7 @@
             <time itemprop="dateCreated" datetime="2020-05-21T00:00:00+08:00">May 21, 2020</time>
 
 <h4>Last Updated</h4>
-<time datetime="2020-05-21T00:00:00+08:00">May 21, 2020</time>
+<time datetime="2020-05-25T00:00:00+08:00">May 25, 2020</time>
 
             <h4>Category</h4>
             <a class="category-link" href="https://johnliu55.tw/categories.html#ssh-linux-ref">SSH, Linux</a>
@@ -435,18 +488,19 @@
         </section>
 </div>
 </article>
+                    </div>
+                    <div class="span1"></div>
                 </div>
-                <div class="span1"></div>
             </div>
         </div>
-        <div id="push"></div>
-    </div>
 <footer>
-<div id="footer">
-    <ul class="footer-content">
-        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="https://github.com/Pelican-Elegant/elegant/" title="Theme Elegant Home Page">Elegant</a></li>
-    </ul>
-</div>
+
+
+
+    <div id="fpowered">
+        Powered by: <a href="http://getpelican.com/" title="Pelican Home Page" target="_blank" rel="nofollow">Pelican</a>
+        Theme: <a href="https://elegant.oncrashreboot.com/" title="Theme Elegant Home Page" target="_blank" rel="nofollow">Elegant</a>
+    </div>
 </footer>            <script src="//code.jquery.com/jquery.min.js"></script>
         <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
         <script>
@@ -497,5 +551,5 @@ $('#disqus_thread').on('shown', function () {
 
     </body>
     <!-- Theme: Elegant built for Pelican
-    License : MIT -->
+        License : MIT -->
 </html>
