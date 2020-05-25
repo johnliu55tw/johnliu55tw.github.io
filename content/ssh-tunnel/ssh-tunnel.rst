@@ -12,7 +12,7 @@ SSH Tunneling (Port Forwarding) 詳解
 .. admonition:: 變更記錄
 
    2020-05-25
-      加入「小技巧和工具」章節來放各種SSH Tunneling的小技巧和工具。
+      加入「 `補充：小技巧和工具`_ 」章節來放各種SSH Tunneling的小技巧和工具。
 
 前陣子研究了一下用SSH Tunneling來連到內部網路的方法，
 一開始實在有點難理解SSH指令與實際情況的關係，但了解後才發現他超級強大，
