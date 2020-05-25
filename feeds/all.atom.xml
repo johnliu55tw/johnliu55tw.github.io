@@ -5,7 +5,7 @@
 &lt;p class="first admonition-title"&gt;變更記錄&lt;/p&gt;
 &lt;dl class="last docutils"&gt;
 &lt;dt&gt;2020-05-25&lt;/dt&gt;
-&lt;dd&gt;加入「小技巧和工具」章節來放各種 SSH Tunneling 的小技巧和工具。&lt;/dd&gt;
+&lt;dd&gt;加入「&lt;a class="reference internal" href="#id10"&gt;補充：小技巧和工具&lt;/a&gt;」章節來放各種 SSH Tunneling 的小技巧和工具。&lt;/dd&gt;
 &lt;/dl&gt;
 &lt;/div&gt;
 &lt;p&gt;前陣子研究了一下用 SSH Tunneling 來連到內部網路的方法，一開始實在有點難理解 SSH 指令與實際情況的關係，但了解後才發現他超級強大，於是就把細節記錄下來之後可以參考，也希望能幫大家了解一下這東西。&lt;/p&gt;
