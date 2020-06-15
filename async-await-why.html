@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="John Liu" />
+
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content="Asynchronous Programming, JavaScript, Async/await, 閒聊, Programming Language, " />
+
+<meta property="og:title" content="為何需要 Async/await 語法？ "/>
+<meta property="og:url" content="https://johnliu55.tw/async-await-why.html" />
+<meta property="og:description" content="在非同步程式設計（Asynchronous Programming）的領域裡， 為何需要要 Async/await 語法？" />
+<meta property="og:site_name" content="John Engineering Stuff" />
+<meta property="og:article:author" content="John Liu" />
+<meta property="og:article:published_time" content="2020-06-14T00:00:00+08:00" />
+<meta name="twitter:title" content="為何需要 Async/await 語法？ ">
+<meta name="twitter:description" content="在非同步程式設計（Asynchronous Programming）的領域裡， 為何需要要 Async/await 語法？">
+
+        <title>為何需要 Async/await 語法？  · John Engineering Stuff
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/css/admonition.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/css/custom.css" media="screen">
+
+        <link href="https://johnliu55.tw/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="John Engineering Stuff - Full Atom Feed" />
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-140381969-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+
+    </head>
+    <body>
+        <div id="content">
+            <div class="navbar navbar-static-top">
+                <div class="navbar-inner">
+                    <div class="container-fluid">
+                        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </a>
+                        <a class="brand" href="https://johnliu55.tw/"><span class=site-name>John Engineering Stuff</span></a>
+                        <div class="nav-collapse collapse">
+                            <ul class="nav pull-right top-menu">
+                                <li ><a href="https://johnliu55.tw">Home</a></li>
+                                <li ><a href="https://johnliu55.tw/pages/about.html">About</a></li>
+                                <li ><a href="https://johnliu55.tw/categories">Categories</a></li>
+                                <li ><a href="https://johnliu55.tw/tags">Tags</a></li>
+                                <li ><a href="https://johnliu55.tw/archives">Archives</a></li>
+                                <li><form class="navbar-search" action="https://johnliu55.tw/search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span1"></div>
+                    <div class="span10">
+<article itemscope>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="https://johnliu55.tw/async-await-why.html"> 為何需要 Async/await 語法？  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+            
+            <p>近年來有許多語言都加入了 <a class="reference external" href="https://en.wikipedia.org/wiki/Async/await">Async/await</a> 這個語法來幫助開發者撰寫非同步程式碼，其中不乏像 JavaScript 與 Python 等熱門語言，和 <a class="reference external" href="https://blog.rust-lang.org/2019/11/07/Async-await-stable.html">Rust</a>
+這樣的靜態形別語言。這邊就記錄一下我自己對它的看法。</p>
+<div class="section" id="tl-dr">
+<h2>TL;DR</h2>
+<p>我認為，使用 async 與 await 來寫非同步的程式碼，最大的好處在於你可以用<strong>同步程式設計的程式碼架構來實作非同步的邏輯</strong>。</p>
+</div>
+<div class="section" id="http">
+<h2>三個 HTTP 請求與他們的回呼</h2>
+<p>譬如，今天你想使用某個部落格的 API 來取得<strong>某個作者</strong>寫的<strong>最新文章</strong>上的<strong>最新評論</strong>，然後拿它來做某件事。以同步的架構來寫的話，你可能會這樣子發送 HTTP 請求：</p>
+<div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">doStuff</span><span class="p">(</span><span class="nx">user_id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">syncHttpGet</span><span class="p">(</span><span class="s1">&#39;/api/users/&#39;</span> <span class="o">+</span> <span class="nx">user_id</span><span class="p">);</span>
+        <span class="kd">let</span> <span class="nx">post</span> <span class="o">=</span> <span class="nx">syncHttpGet</span><span class="p">(</span><span class="s1">&#39;/api/posts/&#39;</span> <span class="o">+</span> <span class="nx">user</span><span class="p">.</span><span class="nx">posts</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">id</span><span class="p">);</span>
+        <span class="kd">let</span> <span class="nx">comment</span> <span class="o">=</span> <span class="nx">syncHttpGet</span><span class="p">(</span><span class="s1">&#39;/api/comments/&#39;</span> <span class="o">+</span> <span class="nx">post</span><span class="p">.</span><span class="nx">comments</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">id</span><span class="p">);</span>
+        <span class="nx">doSomethingToComment</span><span class="p">(</span><span class="nx">comment</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">setGetCommentError</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>這是個很常見的模式：<strong>需要使用上一個請求所得到的回覆來發送下一個</strong>。以同步的程式碼來實作的話：</p>
+<ol class="arabic simple">
+<li>邏輯簡單明瞭，一眼就可以看出做了哪些事</li>
+<li>可以直接利用語言本身的錯誤處理機制（try-catch）</li>
+</ol>
+<p>不過在單執行緒的情況下，同步設計最大問題在於每一個 <tt class="docutils literal">syncHttpGet</tt>
+都是以 Blocking 的方式在執行，所以在得到回覆之前是不會釋放該執行緒的。以前端來說，這會造成<strong>整個 UI 會被凍結，完全無法處理使用者的其他操作</strong>。於是乎，前端或是 UI 相關的東西基本都採用非同步程式設計（Asynchronous Programming）來實作。</p>
+<p>還記得我第一次接觸到非同步程式設計，最難就難在理解<strong>非同步函式不會直接把結果 Return 給你</strong>這件事。啊這樣我是要怎樣拿到結果啦，我下一個請求要怎麼發？</p>
+<img alt="It's hard man" src="https://johnliu55.tw/async-await-why/images/oh-come-on.gif" />
+<p>要解決這問題有幾種方法，不過在 JavaScript 的世界裡，這些非同步操作通常都會以<strong>接收函式為引數的函式</strong>來實作，把最後得到的結果直接丟給你所指定的函式。這樣一來就算不 Return 值回去，也可以繼續下個動作。</p>
+<p>這個被傳進去的函式就稱為「回呼函式」（Callback Function）。用這個概念來實做同樣的邏輯大概會長這樣：</p>
+<div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">doStuff</span><span class="p">(</span><span class="nx">user_id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">callbackHttpGet</span><span class="p">(</span><span class="s1">&#39;/api/users/&#39;</span> <span class="o">+</span> <span class="nx">user_id</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">resp</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">resp</span><span class="p">.</span><span class="nx">statusCode</span> <span class="o">===</span> <span class="mi">200</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">callbackHttpGet</span><span class="p">(</span><span class="s1">&#39;/api/posts/&#39;</span> <span class="o">+</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">posts</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">id</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">resp</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nx">resp</span><span class="p">.</span><span class="nx">statusCode</span> <span class="o">===</span> <span class="mi">200</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="nx">callbackHttpGet</span><span class="p">(</span><span class="s1">&#39;/api/comments/&#39;</span> <span class="o">+</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">comments</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">id</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">resp</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="nx">resp</span><span class="p">.</span><span class="nx">statusCode</span> <span class="o">===</span> <span class="mi">200</span><span class="p">)</span> <span class="p">{</span>
+                            <span class="kd">let</span> <span class="nx">comment</span> <span class="o">=</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+                            <span class="nx">doSomethingToComment</span><span class="p">(</span><span class="nx">comment</span><span class="p">);</span>
+                        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                            <span class="nx">setGetCommentError</span><span class="p">(</span><span class="s1">&#39;Cannot get comment detail&#39;</span><span class="p">);</span>
+                        <span class="p">}</span>
+                    <span class="p">})</span>
+                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                    <span class="nx">setGetCommentError</span><span class="p">(</span><span class="s1">&#39;Cannot get post&#39;</span><span class="p">);</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">setGetCommentError</span><span class="p">(</span><span class="s1">&#39;Cannot get user&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">})</span>
+<span class="p">}</span>
+</pre></div>
+<p><strong>對，這就是回呼地獄（Callback Hell）</strong>。因為必須在得到回覆後<strong>用裡面的資料再次進行非同步操作</strong>，於是就出現了在回呼中再次使用回呼的模式。對，它會動，但很傷眼…</p>
+<ol class="arabic simple">
+<li>層層套疊的金字塔狀程式碼，很難一眼看出內部邏輯</li>
+<li>不斷重覆出現的 <tt class="docutils literal"><span class="pre">if..else</span></tt> 錯誤處理邏輯。另外，如果我只在乎最後的
+<tt class="docutils literal">comment</tt> ，中間的每個 <tt class="docutils literal">setGetCommentError</tt> 都是多餘的程式碼。</li>
+</ol>
+<img alt="Callback Hell meme" src="https://johnliu55.tw/async-await-why/images/callback_hell.jpg" />
+<p>相信很多人都深受其害，迷失在這個地獄…</p>
+</div>
+<div class="section" id="it-will-be-fun-i-promise">
+<h2>It Will Be Fun, I Promise</h2>
+<p>你的聲音， <a class="reference external" href="https://en.wikipedia.org/wiki/ECMAScript#6th_Edition_%E2%80%93_ECMAScript_2015">ES6</a> 聽到了，於是就出現了 <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a> 這個結構來擺脫回呼地獄，讓你可以用 <a class="reference external" href="https://en.wikipedia.org/wiki/Method_chaining">Method chaining</a> 的方式來串連這些 HTTP 請求，而不是一層包一層的模式：</p>
+<div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">doStuff</span><span class="p">(</span><span class="nx">user_id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">asyncPromiseGet</span><span class="p">(</span><span class="s1">&#39;/api/users/&#39;</span> <span class="o">+</span> <span class="nx">user_id</span><span class="p">)</span>
+        <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resp</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">asyncPromiseGet</span><span class="p">(</span><span class="s1">&#39;/api/posts/&#39;</span> <span class="o">+</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">posts</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">id</span><span class="p">);</span>
+        <span class="p">})</span>
+        <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resp</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="nx">asyncPromiseGet</span><span class="p">(</span><span class="s1">&#39;/api/comments/&#39;</span> <span class="o">+</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">comments</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">id</span><span class="p">);</span>
+        <span class="p">})</span>
+        <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">resp</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">let</span> <span class="nx">comment</span> <span class="o">=</span> <span class="nx">resp</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+            <span class="nx">doSomethingToComment</span><span class="p">(</span><span class="nx">comment</span><span class="p">);</span>
+        <span class="p">})</span>
+        <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">setGetCommentError</span><span class="p">(</span><span class="nx">err</span><span class="p">);</span>
+        <span class="p">})</span>
+<span class="p">}</span>
+</pre></div>
+<p><tt class="docutils literal">asyncPromiseGet</tt> 函式會回傳一個 Promise 物件，上面有一個 <tt class="docutils literal">then()</tt> 方法接收一個回呼函式為引數，並在得到 HTTP 回覆時呼叫這個函式。同時 <tt class="docutils literal">then()</tt> 方法也會<strong>回傳一個新的
+Promise 物件</strong>，讓你可以一直 <tt class="docutils literal">.then()</tt> 下去。</p>
+<div class="admonition note">
+<p class="first admonition-title">註釋</p>
+<p class="last">其實 <tt class="docutils literal">then()</tt> 方法可以接收兩個函式引數，這邊為了簡單起見只說明傳一個的情況，細節請看 <a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises">Using Promises</a>。</p>
+</div>
+<p>Promise 真正厲害的地方在於，如果你給 <tt class="docutils literal">then()</tt> 的回呼函式也回傳了 Promise 物件，那麼這個 Promise 最後得到的值，<strong>會被送到</strong> <tt class="docutils literal">then()</tt>
+<strong>所回傳的那個新的 Promise 上</strong>，讓下一個串起來的 <tt class="docutils literal">then()</tt>
+能夠取得你的回呼函式想要得到的結果。就是因為這個原因，我們才能夠使用 Method chaining 而不是巢狀的方式來串連這些 HTTP
+請求。</p>
+<img alt="It will be fun, I promise!" src="https://johnliu55.tw/async-await-why/images/it-will-be-fun-i-promise.jpg" />
+<p>Promise 讓金字塔消失了，而且也簡化了錯誤處理的機制，可以看到我只要最後加個
+<tt class="docutils literal">.catch()</tt> 就能夠統一處理錯誤。然而，這還是逃不了回呼的概念，與同步版本相較之下還是沒那麼優雅。</p>
+</div>
+<div class="section" id="id1">
+<h2>媽，可以不要回呼嗎？</h2>
+<p>就在我以為這輩子就這樣子了的時候， <a class="reference external" href="https://en.wikipedia.org/wiki/ECMAScript#8th_Edition_%E2%80%93_ECMAScript_2017">ES8</a> 出現了 async 與 await：</p>
+<div class="highlight"><pre><span></span><span class="nx">async</span> <span class="kd">function</span> <span class="nx">doStuff</span><span class="p">(</span><span class="nx">user_id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+        <span class="kd">let</span> <span class="nx">user</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">asyncHttpGet</span><span class="p">(</span><span class="s1">&#39;/api/users/&#39;</span> <span class="o">+</span> <span class="nx">user_id</span><span class="p">);</span>
+        <span class="kd">let</span> <span class="nx">post</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">asyncHttpGet</span><span class="p">(</span><span class="s1">&#39;/api/posts/&#39;</span> <span class="o">+</span> <span class="nx">user</span><span class="p">.</span><span class="nx">posts</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">id</span><span class="p">);</span>
+        <span class="kd">let</span> <span class="nx">comment</span> <span class="o">=</span> <span class="nx">await</span> <span class="nx">asyncHttpGet</span><span class="p">(</span><span class="s1">&#39;/api/comments/&#39;</span> <span class="o">+</span> <span class="nx">post</span><span class="p">.</span><span class="nx">comments</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">id</span><span class="p">);</span>
+        <span class="nx">doSomethingToComment</span><span class="p">(</span><span class="nx">comment</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">setGetCommentError</span><span class="p">(</span><span class="nx">e</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>可以看到，除了出現 <tt class="docutils literal">await</tt> 跟 <tt class="docutils literal">async</tt> 這幾個字以外，基本上程式碼的架構與同步版的一模模一樣樣，也可以用語言原生的 <tt class="docutils literal">try catch</tt> 機制來進行錯誤處理，超讚的啦！</p>
+<img alt="It's breathtacking!" src="https://johnliu55.tw/async-await-why/images/breathtaking.gif" />
+<p>值得注意的是，async/await 看起來是全新的概念， 但其實這兩個語法是<a class="reference external" href="https://stackoverflow.com/questions/46908575/async-await-native-implementations">由 Promise 和生成器（Generator）</a>
+來實作的。你可以試著在 Node.js 裡定義一個 async 函式並直接呼叫它：</p>
+<div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="nx">async</span> <span class="kd">function</span> <span class="nx">f</span><span class="p">()</span> <span class="p">{</span> <span class="k">return</span> <span class="mi">1</span><span class="p">;</span> <span class="p">}</span>
+<span class="kc">undefined</span>
+<span class="o">&gt;</span> <span class="nx">f</span><span class="p">()</span>
+<span class="nb">Promise</span> <span class="p">{</span> <span class="mi">1</span> <span class="p">}</span>
+</pre></div>
+<p>可以看到 async 函式回傳的其實是 Promise。對背後實作有興趣可以去 Google 一下，或是去翻一下<a class="reference external" href="https://www.tenlong.com.tw/products/9789864342525">忍者：JavaScript 開發技巧探秘 第二版</a>這本書的第六章，裡面有很詳細的解釋。</p>
+<p>這篇就寫到這…下一篇可能會來聊聊 Python 的 <tt class="docutils literal">asyncio</tt> 吧…？</p>
+</div>
+<div class="section" id="references">
+<h2>References</h2>
+<ul class="simple">
+<li><a class="reference external" href="https://www.tenlong.com.tw/products/9789864342525">忍者：JavaScript 開發技巧探秘 第二版</a></li>
+<li><a class="reference external" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises">Using Promises</a> - MDN</li>
+<li><a class="reference external" href="https://en.wikipedia.org/wiki/Async/await">Async/Await</a> - JAVASCRIPT.INFO</li>
+</ul>
+</div>
+
+
+
+            <div>
+</div>
+
+            <section>
+    <p id="post-share-links">
+    Share on:
+    <a href="https://twitter.com/intent/tweet?text=%E7%82%BA%E4%BD%95%E9%9C%80%E8%A6%81%20Async/await%20%E8%AA%9E%E6%B3%95%EF%BC%9F&url=https%3A//johnliu55.tw/async-await-why.html&hashtags=asynchronous-programming,javascript,asyncawait,xian-liao" target="_blank" title="Share on Twitter">Twitter</a>
+    ❄
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A//johnliu55.tw/async-await-why.html" target="_blank" title="Share on Facebook">Facebook</a>
+    ❄
+    <a href="mailto:?subject=%E7%82%BA%E4%BD%95%E9%9C%80%E8%A6%81%20Async/await%20%E8%AA%9E%E6%B3%95%EF%BC%9F&amp;body=https%3A//johnliu55.tw/async-await-why.html" target="_blank" title="Share via Email">Email</a>
+    </p>
+</section>
+
+            <section>
+<div class="accordion" id="accordion2">
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle disqus-comment-count" data-toggle="collapse" data-parent="#accordion2"
+                href="https://johnliu55.tw/async-await-why.html#disqus_thread",
+                id="disqus-accordion-toggle">
+                Comments
+            </a>
+        </div>
+        <div id="disqus_thread" class="accordion-body collapse">
+            <div class="accordion-inner">
+                <div class="comments">
+                    <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'johnliu55tw';
+        var disqus_identifier = 'https://johnliu55.tw/async-await-why.html';
+    var disqus_url = 'https://johnliu55.tw/async-await-why.html';
+
+    (function() {
+         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+         dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+     })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="https://johnliu55.tw/ssh-tunnel.html" title="Previous: SSH Tunneling (Port Forwarding) 詳解">SSH Tunneling (Port Forwarding) 詳解</a></li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time itemprop="dateCreated" datetime="2020-06-14T00:00:00+08:00">Jun 14, 2020</time>
+            <h4>Category</h4>
+            <a class="category-link" href="https://johnliu55.tw/categories.html#programming-language-ref">Programming Language</a>
+            <h4>Tags</h4>
+            <ul class="list-of-tags tags-in-article">
+                <li><a href="https://johnliu55.tw/tags#asyncawait-ref">Async/await
+                    <span>1</span>
+</a></li>
+                <li><a href="https://johnliu55.tw/tags#asynchronous-programming-ref">Asynchronous Programming
+                    <span>1</span>
+</a></li>
+                <li><a href="https://johnliu55.tw/tags#javascript-ref">JavaScript
+                    <span>1</span>
+</a></li>
+                <li><a href="https://johnliu55.tw/tags#xian-liao-ref">閒聊
+                    <span>1</span>
+</a></li>
+            </ul>
+<h4>Contact</h4>
+    <a href="https://github.com/johnliu55tw" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="https://www.linkedin.com/in/johnliu55tw/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                    </div>
+                    <div class="span1"></div>
+                </div>
+            </div>
+        </div>
+<footer>
+
+
+
+    <div id="fpowered">
+        Powered by: <a href="http://getpelican.com/" title="Pelican Home Page" target="_blank" rel="nofollow">Pelican</a>
+        Theme: <a href="https://elegant.oncrashreboot.com/" title="Theme Elegant Home Page" target="_blank" rel="nofollow">Elegant</a>
+    </div>
+</footer>            <script src="//code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+            <script type="text/javascript">
+var disqus_shortname = 'johnliu55tw';
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+<script  language="javascript" type="text/javascript">
+function uncollapse() {
+    if (window.location.hash.match(/^#comment-\d+$/)) {
+        $('#disqus_thread').collapse('show');
+    }
+}
+</script>
+<script type="text/javascript" language="JavaScript">
+uncollapse();
+window.onhashchange=function(){
+    if (window.location.hash.match(/^#comment-\d+$/))
+        window.location.reload(true);
+}
+</script>
+<script>
+$('#disqus_thread').on('shown', function () {
+    var link = document.getElementById('disqus-accordion-toggle');
+    var old_innerHTML = link.innerHTML;
+    $(link).fadeOut(500, function() {
+        $(this).text('Click here to hide comments').fadeIn(500);
+    });
+    $('#disqus_thread').on('hidden', function () {
+        $(link).fadeOut(500, function() {
+            $(this).text(old_innerHTML).fadeIn(500);
+        });
+    })
+})
+</script>
+
+
+    </body>
+    <!-- Theme: Elegant built for Pelican
+        License : MIT -->
+</html>
