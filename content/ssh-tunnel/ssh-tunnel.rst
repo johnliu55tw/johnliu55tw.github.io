@@ -3,11 +3,13 @@ SSH Tunneling (Port Forwarding) 詳解
 ####################################
 
 :date: 2020-05-21
+:slug: ssh-tunneling
 :modified: 2020-05-25
 :category: SSH, Linux
 :tags: SSH, Linux, Tunneling, Port Forwarding
 :summary: 詳細解釋使用SSH的Local Port Forwarding、Remote Port Forwarding、
           和Dynamic Port Forwarding來建立加密通道（Tunneling）的方法。
+:lang: zh-tw
 
 .. admonition:: 變更記錄
 
