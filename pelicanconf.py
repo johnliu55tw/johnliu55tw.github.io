@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*- #
 from __future__ import unicode_literals
 
+# Directly import pelican-youtube
+import pelican_youtube
+
 PLUGIN_PATHS = ['./plugins', './pelican-plugins']
 
 THEME = 'themes/elegant'
@@ -23,7 +26,7 @@ TAG_SAVE_AS = ''
 AUTHOR_SAVE_AS = ''
 CATEGORY_SAVE_AS = ''
 STATIC_PATHS = ['theme/images', 'images']
-PLUGINS = ['pelican_cjk', 'sitemap', 'tipue_search', 'neighbors', 'share_post']
+PLUGINS = ['pelican_cjk', 'sitemap', 'tipue_search', 'neighbors', 'share_post', pelican_youtube]
 DIRECT_TEMPLATES = ('index', 'tags', 'categories', 'archives', 'search', '404')
 SITEMAP = {'format': 'xml'}
 
