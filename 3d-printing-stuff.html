@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="John Liu" />
+
+        <meta property="og:type" content="article" />
+        <meta name="twitter:card" content="summary">
+
+<meta name="keywords" content="3D Printing, 3D Printing, " />
+
+<meta property="og:title" content="3D列印二三事 "/>
+<meta property="og:url" content="https://johnliu55.tw/3d-printing-stuff.html" />
+<meta property="og:description" content="關於我玩3D列印的事" />
+<meta property="og:site_name" content="John Engineering Stuff" />
+<meta property="og:article:author" content="John Liu" />
+<meta property="og:article:published_time" content="2021-06-25T00:00:00+08:00" />
+<meta name="twitter:title" content="3D列印二三事 ">
+<meta name="twitter:description" content="關於我玩3D列印的事">
+
+        <title>3D列印二三事  · John Engineering Stuff
+</title>
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/css/pygments.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/tipuesearch/tipuesearch.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/css/elegant.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/css/admonition.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="https://johnliu55.tw/theme/css/custom.css" media="screen">
+
+        <link href="https://johnliu55.tw/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="John Engineering Stuff - Full Atom Feed" />
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-140381969-1', 'auto');
+    ga('send', 'pageview');
+</script>
+
+
+    </head>
+    <body>
+        <div id="content">
+            <div class="navbar navbar-static-top">
+                <div class="navbar-inner">
+                    <div class="container-fluid">
+                        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </a>
+                        <a class="brand" href="https://johnliu55.tw/"><span class=site-name>John Engineering Stuff</span></a>
+                        <div class="nav-collapse collapse">
+                            <ul class="nav pull-right top-menu">
+                                <li ><a href="https://johnliu55.tw">Home</a></li>
+                                <li ><a href="https://johnliu55.tw/pages/about.html">About</a></li>
+                                <li ><a href="https://johnliu55.tw/categories">Categories</a></li>
+                                <li ><a href="https://johnliu55.tw/tags">Tags</a></li>
+                                <li ><a href="https://johnliu55.tw/archives">Archives</a></li>
+                                <li><form class="navbar-search" action="https://johnliu55.tw/search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span1"></div>
+                    <div class="span10">
+<article itemscope>
+<div class="row-fluid">
+    <header class="page-header span10 offset2">
+    <h1><a href="https://johnliu55.tw/3d-printing-stuff.html"> 3D列印二三事  </a></h1>
+    </header>
+</div>
+
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
+            
+            <p>這篇無關技術，單純想講一下我玩 3D 列印一年多來的故事呵呵。</p>
+<p>我一直都很喜歡 DIY、自己弄東弄西的感覺。唸大學的時候把 KTR 給大改成 Cafe Racer；租空房買了幾萬塊的 Ikea 傢俱全部自己組；選用 ArchLinux 把自己的 Linux 給拼湊起來。雖然很累，但我很享受這些過程。</p>
+<p>也忘了是為什麼，2019 年時我偶然得知了「3D 印表機」這個東西。這玩意兒太讚了吧！只要電腦畫的出來，我就可以把他變成實體，想到就好爽啊！</p>
+<p>所以在 2019 年底，我下定決心買了第一台 3D 印表機：
+<a class="reference external" href="https://www.anycubic.com/products/anycubic-i3-mega-s">Anycubic i3 Mega S</a> 。</p>
+<p>靠著這台機器我理解了 3D 列印的概念，印了不少東西後秉持著 DIY 精神也改裝了不少東西上去，從加燈條、燒客製 Firmware、到自己設計 Direct Extruder，玩的不亦樂乎。</p>
+<div class="figure">
+<img alt="Anycubic i3 Mega S 最終型態 " src="https://johnliu55.tw/3d-printing-stuff/images/anycubic_i3.jpg" style="width: 600px;" />
+<div class="legend">
+Anycubic i3 Mega S 最終型態</div>
+</div>
+<p>到了 2020 年底，我發現大部分的時間我都是在「改進它」而不是「用它」，覺得這樣下去好像不太對勁，我應該花多點時間在 3D 列印本身。於是咧，趁著 Cyber Monday 免運活動訂了一台
+<a class="reference external" href="https://www.prusa3d.com/original-prusa-i3-mk3/">Prusa i3 MK3S+</a> 。</p>
+<p>Prusa 是一間位於捷克的公司，他們的 Prusa i3 系列是一台需要自己從零件開始組裝，而且號稱同價格帶中列印品質最好的機器，但比起中國牌子的機器還是貴上不少（749 鎂不含運），所以當初猶豫超級久。</p>
+<div class="figure">
+<img alt="Prusa i3 assembling" src="https://johnliu55.tw/3d-printing-stuff/images/prusa_assembling.jpg" style="width: 800px;" />
+<div class="legend">
+Prusa i3 MK3S+ 組裝過程</div>
+</div>
+<p>組裝花了我兩天的時間，不過他開始印的時候真的超有成就感，印出來的品質也不是開玩笑，跟 Anycubic 真的有差。</p>
+<div class="figure">
+<img alt="Prusa Benchy" src="https://johnliu55.tw/3d-printing-stuff/images/prusa_benchy.jpg" style="width: 800px;" />
+<div class="legend">
+Prusa i3 MK3S+ 印出來的 Benchy</div>
+</div>
+<p><strong>「你終究要開歐洲車的，那為什麼不一開始就開呢？」</strong></p>
+<p>欸，不過作為入門，Anycubic 還是相當稱職的，而且拆拆裝裝改來改去比較不會心痛。</p>
+<div class="section" id="id1">
+<h2>線材防潮箱</h2>
+<p>既然升級了印表機，週邊也要跟著升級一下。</p>
+<p>Prusa i3 和 Anycubic i3 這個型式（FDM，其他還有 SLS、SLA 等）的 3D 印表機需要「線材」（Filament）當原料來印出成品， 而線材又有分不同的塑膠材質，像是 PLA、PETG、ABS 等等。而某些材質容易受潮，受潮後會造成印出成品品質變差，強度變低，甚至印到一半就失敗。</p>
+<div class="figure">
+<img alt=" 受潮後印出來的成品 " src="https://johnliu55.tw/3d-printing-stuff/images/wet_filament.jpg" style="width: 800px;" />
+<p class="caption">Source: <a class="reference external" href="https://www.matterhackers.com/news/filament-and-water">MatterHacker</a></p>
+<div class="legend">
+乾燥和受潮線材印出成品比較，可以看到受潮線材的表面相當粗糙</div>
+</div>
+<p>其中一個解決方法是<strong>讓線材在使用前變乾燥</strong>。我一開始是用這個方法，因為只要拿一台食物乾燥機來改裝一下就行了。甚至如果有溫控烤箱，使用之前拿線材低溫烘烤一下也可以，便宜又簡單。</p>
+<div class="figure">
+<img alt="DIY 線材乾燥機 " src="https://johnliu55.tw/3d-printing-stuff/images/diy_filament_dryer.jpg" style="width: 800px;" />
+<div class="legend">
+DIY 線材乾燥機</div>
+</div>
+<p>不過每次使用前都要烘它個兩三小時，久了也是有點煩。所以之後決定採用另一個方法，<strong>讓線材由始至終都待在乾燥的環境中</strong>，連受潮的機會都不讓它有。而關於這種東西，網路上有相當多的資源可以參考，來自已 DIY。這邊貼一個我很喜歡的頻道 <strong>CNC Kitchen</strong> 實作線材防潮箱的影片：</p>
+<div class="youtube youtube-16x9"><iframe src="https://www.youtube.com/embed/WEFtUKGAd7k" width="800" height="450" allowfullscreen seamless frameBorder="0"></iframe></div><p>這箱子的基本概念很簡單：</p>
+<ol class="arabic simple">
+<li>找一個夠大的密封式防潮箱</li>
+<li>裡面加個支架放線材卷（Filament Spool）</li>
+<li>鑽幾個洞讓線材能出入</li>
+<li>把除濕劑倒進去，再放一台濕度計監控濕度</li>
+<li>蓋子蓋起來</li>
+</ol>
+<p>聽起來很簡單嘛，所以我就做了一個：</p>
+<div class="figure">
+<img alt="DIY Dry Box" src="https://johnliu55.tw/3d-printing-stuff/images/dry_box.jpg" style="width: 800px;" />
+<div class="legend">
+我的 DIY 線材防潮箱</div>
+</div>
+<p>跟影片裡的比起來，我另外設計了<strong>外部線材架</strong>。因為某些線材不易受潮，所以可以放在一般環境中也不會影響品質。所以我在箱蓋上另外設計了支架來放這些線材。</p>
+<div class="figure">
+<img alt="DIY Dry Box Top Rack" src="https://johnliu55.tw/3d-printing-stuff/images/dry_box_top_rack_3.jpg" style="width: 800px;" />
+<div class="legend">
+外部線材架</div>
+</div>
+<p>放線材的桿子都是 8mm 的碳纖維棒，而且兩側都有軸承來讓它可以滑順的滾動。用碳纖維棒只是因為找不到同規格的金屬棒，絕對不是因為碳纖維比較潮。</p>
+<div class="figure">
+<img alt="DIY Dry Box Bearing Rod" src="https://johnliu55.tw/3d-printing-stuff/images/dry_box_bearing.jpg" style="width: 800px;" />
+</div>
+<div class="figure">
+<img alt="DIY Dry Box Top Rack Bearing" src="https://johnliu55.tw/3d-printing-stuff/images/dry_box_top_rack_2.jpg" style="width: 800px;" />
+</div>
+<div class="figure">
+<img alt="DIY Dry Box Inside Rack Bearing" src="https://johnliu55.tw/3d-printing-stuff/images/dry_box_inside_rack.jpg" style="width: 800px;" />
+</div>
+<p>利用 PTFE Tube 加上我自己設計的支架讓線材能順利的走到印表機：</p>
+<div class="figure">
+<img alt=" 線材走線支架 " src="https://johnliu55.tw/3d-printing-stuff/images/ptfe_rack.jpg" style="width: 800px;" />
+<div class="legend">
+PTFE Tube + 支架</div>
+</div>
+<p>我設計了一個零件讓 PTFE Tube 可以固定在 Extruder 上：</p>
+<div class="figure">
+<img alt="PTFE Tube Cap" src="https://johnliu55.tw/3d-printing-stuff/images/ptfe_tube_cap.jpg" style="width: 800px;" />
+<div class="legend">
+PTFE Tube Cap</div>
+</div>
+<p>設計這個零件很簡單，因為 Prusa i3 系列印表機是 open-sourced！所以可以直接拿到這個零件的 STL 檔進行修改。</p>
+<p>把箱子跟印表機組合在一起最後長這樣：</p>
+<div class="figure">
+<img alt="DIY Dry Box with Prusa i3" src="https://johnliu55.tw/3d-printing-stuff/images/dry_box_all.jpg" style="width: 800px;" />
+<div class="legend">
+指揮艇組合</div>
+</div>
+<p><strong>這東西好用到不行啊！</strong>不但能保持線材乾燥，閒置的線材現在也有地方放了，不會滾來滾去的，超方便。</p>
+</div>
+<div class="section" id="id2">
+<h2>印列成品</h2>
+<p>這邊放一些我自己設計的小東西。</p>
+<div class="section" id="id3">
+<h3>筆電立架</h3>
+<p>我的螢幕、鍵盤、滑鼠都是外接的，所以筆電其實沒有必要打開。為了節省空間，我想要把筆電立起來藏在螢幕後面，所以設計了一個立架來放。</p>
+<div class="figure">
+<img alt=" 筆電立架 " src="https://johnliu55.tw/3d-printing-stuff/images/laptop_rack.jpg" style="width: 800px;" />
+</div>
+<div class="figure">
+<img alt=" 筆電立架獨照 " src="https://johnliu55.tw/3d-printing-stuff/images/laptop_rack_detail.jpg" style="width: 800px;" />
+<div class="legend">
+筆電立架</div>
+</div>
+</div>
+<div class="section" id="usb-hub">
+<h3>USB Hub 支架</h3>
+<p>同樣是為省空間（房間是有多小）跟整線，我設計了一個 USB Hub 的支架，把我用的 USB Hub 固定在螢幕架上，讓整體更乾淨。</p>
+<div class="figure">
+<img alt="USB Hub 支架 " src="https://johnliu55.tw/3d-printing-stuff/images/usb_hub_rack.jpg" style="width: 800px;" />
+<div class="legend">
+USB Hub 支架</div>
+</div>
+</div>
+<div class="section" id="raspberry-pi-4-platform">
+<h3>Raspberry Pi 4 Platform</h3>
+<p>自從 Raspberry Pi 4 有了 USB 3.0 後，外接 SSD 變成很合理的選擇，所以我設計了一個 SATA SSD Mount 把 Raspberry Pi 跟 SSD 結合在一起。另外為了實驗需求也設計了一個支架來裝些按鈕跟 LED。</p>
+<p>這邊要提一下 Raspberry Pi 本體的 Case 並不是我設計的，而是 Thingiverse 上找的：
+<a class="reference external" href="https://www.thingiverse.com/thing:3726254">Raspberry Pi 4 snap fit case with 30mm Fan</a>
+。</p>
+<div class="figure">
+<img alt="Raspberry Pi 4 Mount" src="https://johnliu55.tw/3d-printing-stuff/images/rpi4_mount.jpg" style="width: 800px;" />
+<div class="legend">
+Raspberry Pi 4 Mount（請忽略上面的灰塵）</div>
+</div>
+<hr class="docutils" />
+<p>我還記得剛拿到第一台印表機時，我常常可以盯著列印過程幾十分鐘沒問題，看到自己設計的東西一小步一小步被印出來的感動之情難以言語啊！尤其印完之後拿在手上的感覺，真的是滿足到不行。</p>
+<p>先分享到這裡，有興趣我再多寫一點。</p>
+</div>
+</div>
+
+
+
+            <div>
+</div>
+
+            <section>
+    <p id="post-share-links">
+    Share on:
+    <a href="https://twitter.com/intent/tweet?text=3D%E5%88%97%E5%8D%B0%E4%BA%8C%E4%B8%89%E4%BA%8B&url=https%3A//johnliu55.tw/3d-printing-stuff.html&hashtags=3d-printing" target="_blank" title="Share on Twitter">Twitter</a>
+    ❄
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A//johnliu55.tw/3d-printing-stuff.html" target="_blank" title="Share on Facebook">Facebook</a>
+    ❄
+    <a href="mailto:?subject=3D%E5%88%97%E5%8D%B0%E4%BA%8C%E4%B8%89%E4%BA%8B&amp;body=https%3A//johnliu55.tw/3d-printing-stuff.html" target="_blank" title="Share via Email">Email</a>
+    </p>
+</section>
+
+            <section>
+<div class="accordion" id="accordion2">
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle disqus-comment-count" data-toggle="collapse" data-parent="#accordion2"
+                href="https://johnliu55.tw/3d-printing-stuff.html#disqus_thread",
+                id="disqus-accordion-toggle">
+                Comments
+            </a>
+        </div>
+        <div id="disqus_thread" class="accordion-body collapse">
+            <div class="accordion-inner">
+                <div class="comments">
+                    <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'johnliu55tw';
+        var disqus_identifier = 'https://johnliu55.tw/3d-printing-stuff.html';
+    var disqus_url = 'https://johnliu55.tw/3d-printing-stuff.html';
+
+    (function() {
+         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+         dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+     })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+            <hr/>
+            <aside>
+            <nav>
+            <ul class="articles-timeline">
+                <li class="previous-article">« <a href="https://johnliu55.tw/async-await-why.html" title="Previous: 為何需要 Async/await 語法？">為何需要 Async/await 語法？</a></li>
+            </ul>
+            </nav>
+            </aside>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+            <h4>Published</h4>
+            <time itemprop="dateCreated" datetime="2021-06-25T00:00:00+08:00">Jun 25, 2021</time>
+            <h4>Category</h4>
+            <a class="category-link" href="https://johnliu55.tw/categories.html#3d-printing-ref">3D Printing</a>
+            <h4>Tags</h4>
+            <ul class="list-of-tags tags-in-article">
+                <li><a href="https://johnliu55.tw/tags#3d-printing-ref">3D Printing
+                    <span>1</span>
+</a></li>
+            </ul>
+<h4>Contact</h4>
+    <a href="https://github.com/johnliu55tw" title="My Github Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-github sidebar-social-links"></i></a>
+    <a href="https://www.linkedin.com/in/johnliu55tw/" title="My LinkedIn Profile" class="sidebar-social-links" target="_blank">
+    <i class="fa fa-linkedin sidebar-social-links"></i></a>
+        </div>
+        </section>
+</div>
+</article>
+                    </div>
+                    <div class="span1"></div>
+                </div>
+            </div>
+        </div>
+<footer>
+
+
+
+    <div id="fpowered">
+        Powered by: <a href="http://getpelican.com/" title="Pelican Home Page" target="_blank" rel="nofollow">Pelican</a>
+        Theme: <a href="https://elegant.oncrashreboot.com/" title="Theme Elegant Home Page" target="_blank" rel="nofollow">Elegant</a>
+    </div>
+</footer>            <script src="//code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+            <script type="text/javascript">
+var disqus_shortname = 'johnliu55tw';
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+<script  language="javascript" type="text/javascript">
+function uncollapse() {
+    if (window.location.hash.match(/^#comment-\d+$/)) {
+        $('#disqus_thread').collapse('show');
+    }
+}
+</script>
+<script type="text/javascript" language="JavaScript">
+uncollapse();
+window.onhashchange=function(){
+    if (window.location.hash.match(/^#comment-\d+$/))
+        window.location.reload(true);
+}
+</script>
+<script>
+$('#disqus_thread').on('shown', function () {
+    var link = document.getElementById('disqus-accordion-toggle');
+    var old_innerHTML = link.innerHTML;
+    $(link).fadeOut(500, function() {
+        $(this).text('Click here to hide comments').fadeIn(500);
+    });
+    $('#disqus_thread').on('hidden', function () {
+        $(link).fadeOut(500, function() {
+            $(this).text(old_innerHTML).fadeIn(500);
+        });
+    })
+})
+</script>
+
+
+    </body>
+    <!-- Theme: Elegant built for Pelican
+        License : MIT -->
+</html>
