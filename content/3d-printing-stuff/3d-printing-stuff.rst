@@ -248,6 +248,33 @@ Raspberry Pi 4 Platform
 
    Raspberry Pi 4 Mount（請忽略上面的灰塵）
 
+可調式電源供應器
+================
+
+自己有時候會玩一些微控制器等等的東西，
+這時候就需要一台可調式電源供應器（Bench Power Supply）啦。
+買了一些DIY零件後自己設計個外殼把它們裝起來。
+
+.. figure:: {static}images/bench-power-supply/front.jpg
+   :alt: Bench Power Supply Front
+   :width: 800
+
+.. figure:: {static}images/bench-power-supply/back.jpg
+   :alt: Bench Power Supply Back
+   :width: 800
+
+.. figure:: {static}images/bench-power-supply/inside.jpg
+   :alt: Bench Power Supply Inside
+   :width: 800
+
+.. figure:: {static}images/bench-power-supply/on.jpg
+   :alt: Bench Power Supply Power On
+   :width: 800
+
+   ..
+
+   DIY Bench Power Supply（請忽略要印超久懶得再印一次所以顏色不太搭的上蓋）
+
 ----
 
 我還記得剛拿到第一台印表機時，我常常可以盯著列印過程幾十分鐘沒問題，
