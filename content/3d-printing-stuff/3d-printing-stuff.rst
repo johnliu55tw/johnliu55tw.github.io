@@ -7,6 +7,11 @@
 :tags: 3D Printing
 :summary: 關於我玩3D列印的事
 
+.. admonition:: 變更記錄
+
+   2020-06-27
+      加入「 `OctoPrint`_ 」
+
 這篇無關技術，單純想講一下我玩3D列印一年多來的故事呵呵。
 
 我一直都很喜歡DIY、自己弄東弄西的感覺。唸大學的時候把KTR給大改成Cafe Racer；
@@ -190,6 +195,82 @@ Prusa i3和Anycubic i3這個型式（FDM，其他還有SLS、SLA等）的3D印�
 
 **這東西好用到不行啊！** 不但能保持線材乾燥，閒置的線材現在也有地方放了，
 不會滾來滾去的，超方便。
+
+*********
+OctoPrint
+*********
+
+不管是Anycubic i3 Mega S或是Prusa i3 MK3S+，要開始列印都有個繁雜的流程：
+
+1. 把SD卡插到電腦上
+
+2. 把Slicer產生出來的 ``.gcode`` 檔從電腦放到SD卡上
+
+3. 把SD卡從電腦拔出來，插到印表機上
+
+4. 從印表機選擇SD卡上的檔案，開始列印
+
+.. figure:: {static}images/prusa_sdcard.jpg
+   :alt: Prusa i3 SD card
+   :width: 800
+
+   ..
+
+   Prusa i3 MK3S+ SD卡列印介面
+
+有些近期推出的3D印表機已經內建WiFi功能，換句話說就是能夠透過網路來傳輸
+``.gocde`` 檔，不用再插插拔拔的了。
+而為了讓Prusa i3 MK3S+能夠支援網路列印，我們可以透過
+`OctoPrint <https://octoprint.org/>`_ 這個open-source專案來達成。
+
+.. figure:: {static}images/octoprint_logo.png
+   :alt: OctoPrint Logo
+   :width: 600
+   :target: https://octoprint.org/
+
+OctoPrint提供了一個Web UI讓使用者能夠遠端監控印表機目前的狀態，
+以及將 ``.gcode`` 檔「串流」至印表機的功能。也就是這個「串流」功能，
+讓我們可以遠端列印，不用再透過SD卡了。
+
+.. figure:: {static}images/octoprint_ui.png
+   :alt: OctoPrint UI
+   :width: 800
+
+   ..
+
+   OctoPrint Web UI
+
+有了OctoPrint之後，列印流程變成了：
+
+1. 把Slicer產生出來的 ``.gcode`` 檔透過Web UI上傳至OctoPrint
+
+2. 從OctoPrint Web UI指示3D印表機開始列印這個 ``.gcode`` 檔
+
+同時我們也可以從Web UI上監控列印過程，舒服。
+
+OctoPi
+======
+
+OctoPrint是用Python寫的，並使用USB介面跟3D印表機溝通，
+所以基本上任何 **有USB且能跑Python的平台** 都可以安裝OctoPrint。
+不過大家最常用的還是Raspberry Pi，因為便宜好取得，且OctoPrint官方也提供
+`OctoPi <https://octoprint.org/download/>`_ 這個image可以直接將OctoPrint
+佈署至Raspberry Pi上。我原本是拿一塊閒置的Beaglebone Black來跑，
+但跑起來實在是相當慢…所以最後還是買了二手Raspberry Pi 3B來佈署。
+
+.. figure:: {static}images/octopi.jpg
+   :alt: OctoPi
+   :width: 600
+
+   ..
+
+   Raspberry Pi 3B與Prusa i3 MK3S+
+
+另外呢，OctoPrint還有各式各樣的Plugin可以裝，像是
+`Firmware Updater <https://github.com/OctoPrint/OctoPrint-FirmwareUpdater/blob/master/README.md>`_
+能夠遠端更新印表機Firmware、
+`Bed Visualizer <https://github.com/jneilliii/OctoPrint-BedLevelVisualizer>`_
+能夠看到Bed Leveling的狀態等，實在好用，建議有3D印表機但還沒裝OctoPrint的一定要試一下。
 
 ********
 印列成品
