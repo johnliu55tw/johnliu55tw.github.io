@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom"><title>John Engineering Stuff - 3D Printing</title><link href="https://johnliu55.tw/" rel="alternate"></link><link href="https://johnliu55.tw/feeds/3d-printing.atom.xml" rel="self"></link><id>https://johnliu55.tw/</id><updated>2021-06-25T00:00:00+08:00</updated><entry><title>3D列印二三事</title><link href="https://johnliu55.tw/3d-printing-stuff.html" rel="alternate"></link><published>2021-06-25T00:00:00+08:00</published><updated>2021-06-25T00:00:00+08:00</updated><author><name>John Liu</name></author><id>tag:johnliu55.tw,2021-06-25:/3d-printing-stuff.html</id><summary type="html">&lt;p class="first last"&gt;關於我玩3D列印的事&lt;/p&gt;
-</summary><content type="html">&lt;p&gt;這篇無關技術，單純想講一下我玩 3D 列印一年多來的故事呵呵。&lt;/p&gt;
+</summary><content type="html">&lt;div class="admonition admonition-"&gt;
+&lt;p class="first admonition-title"&gt;變更記錄&lt;/p&gt;
+&lt;dl class="last docutils"&gt;
+&lt;dt&gt;2020-06-27&lt;/dt&gt;
+&lt;dd&gt;加入「 &lt;a class="reference external" href="https://octoprint.org/"&gt;OctoPrint&lt;/a&gt; 」&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;/div&gt;
+&lt;p&gt;這篇無關技術，單純想講一下我玩 3D 列印一年多來的故事呵呵。&lt;/p&gt;
 &lt;p&gt;我一直都很喜歡 DIY、自己弄東弄西的感覺。唸大學的時候把 KTR 給大改成 Cafe Racer；租空房買了幾萬塊的 Ikea 傢俱全部自己組；選用 ArchLinux 把自己的 Linux 給拼湊起來。雖然很累，但我很享受這些過程。&lt;/p&gt;
 &lt;p&gt;也忘了是為什麼，2019 年時我偶然得知了「3D 印表機」這個東西。這玩意兒太讚了吧！只要電腦畫的出來，我就可以把他變成實體，想到就好爽啊！&lt;/p&gt;
 &lt;p&gt;所以在 2019 年底，我下定決心買了第一台 3D 印表機：
@@ -95,10 +102,59 @@ PTFE Tube Cap&lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;&lt;strong&gt;這東西好用到不行啊！&lt;/strong&gt;不但能保持線材乾燥，閒置的線材現在也有地方放了，不會滾來滾去的，超方便。&lt;/p&gt;
 &lt;/div&gt;
-&lt;div class="section" id="id2"&gt;
+&lt;div class="section" id="octoprint"&gt;
+&lt;h2&gt;OctoPrint&lt;/h2&gt;
+&lt;p&gt;不管是 Anycubic i3 Mega S 或是 Prusa i3 MK3S+，要開始列印都有個繁雜的流程：&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;把 SD 卡插到電腦上&lt;/li&gt;
+&lt;li&gt;把 Slicer 產生出來的 &lt;tt class="docutils literal"&gt;.gcode&lt;/tt&gt; 檔從電腦放到 SD 卡上&lt;/li&gt;
+&lt;li&gt;把 SD 卡從電腦拔出來，插到印表機上&lt;/li&gt;
+&lt;li&gt;從印表機選擇 SD 卡上的檔案，開始列印&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class="figure"&gt;
+&lt;img alt="Prusa i3 SD card" src="https://johnliu55.tw/3d-printing-stuff/images/prusa_sdcard.jpg" style="width: 800px;" /&gt;
+&lt;div class="legend"&gt;
+Prusa i3 MK3S+ SD 卡列印介面&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;有些近期推出的 3D 印表機已經內建 WiFi 功能，換句話說就是能夠透過網路來傳輸
+&lt;tt class="docutils literal"&gt;.gocde&lt;/tt&gt; 檔，不用再插插拔拔的了。而為了讓 Prusa i3 MK3S+ 能夠支援網路列印，我們可以透過
+&lt;a class="reference external" href="https://octoprint.org/"&gt;OctoPrint&lt;/a&gt; 這個 open-source 專案來達成。&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;a class="reference external image-reference" href="https://octoprint.org/"&gt;&lt;img alt="OctoPrint Logo" src="https://johnliu55.tw/3d-printing-stuff/images/octoprint_logo.png" style="width: 600px;" /&gt;&lt;/a&gt;
+&lt;/div&gt;
+&lt;p&gt;OctoPrint 提供了一個 Web UI 讓使用者能夠遠端監控印表機目前的狀態，以及將 &lt;tt class="docutils literal"&gt;.gcode&lt;/tt&gt; 檔「串流」至印表機的功能。也就是這個「串流」功能，讓我們可以遠端列印，不用再透過 SD 卡了。&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img alt="OctoPrint UI" src="https://johnliu55.tw/3d-printing-stuff/images/octoprint_ui.png" style="width: 800px;" /&gt;
+&lt;div class="legend"&gt;
+OctoPrint Web UI&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;有了 OctoPrint 之後，列印流程變成了：&lt;/p&gt;
+&lt;ol class="arabic simple"&gt;
+&lt;li&gt;把 Slicer 產生出來的 &lt;tt class="docutils literal"&gt;.gcode&lt;/tt&gt; 檔透過 Web UI 上傳至 OctoPrint&lt;/li&gt;
+&lt;li&gt;從 OctoPrint Web UI 指示 3D 印表機開始列印這個 &lt;tt class="docutils literal"&gt;.gcode&lt;/tt&gt; 檔&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;同時我們也可以從 Web UI 上監控列印過程，舒服。&lt;/p&gt;
+&lt;div class="section" id="octopi"&gt;
+&lt;h3&gt;OctoPi&lt;/h3&gt;
+&lt;p&gt;OctoPrint 是用 Python 寫的，並使用 USB 介面跟 3D 印表機溝通，所以基本上任何&lt;strong&gt;有 USB 且能跑 Python 的平台&lt;/strong&gt;都可以安裝 OctoPrint。不過大家最常用的還是 Raspberry Pi，因為便宜好取得，且 OctoPrint 官方也提供
+&lt;a class="reference external" href="https://octoprint.org/download/"&gt;OctoPi&lt;/a&gt; 這個 image 可以直接將 OctoPrint
+佈署至 Raspberry Pi 上。我原本是拿一塊閒置的 Beaglebone Black 來跑，但跑起來實在是相當慢…所以最後還是買了二手 Raspberry Pi 3B 來佈署。&lt;/p&gt;
+&lt;div class="figure"&gt;
+&lt;img alt="OctoPi" src="https://johnliu55.tw/3d-printing-stuff/images/octopi.jpg" style="width: 600px;" /&gt;
+&lt;div class="legend"&gt;
+Raspberry Pi 3B 與 Prusa i3 MK3S+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;另外呢，OctoPrint 還有各式各樣的 Plugin 可以裝，像是
+&lt;a class="reference external" href="https://github.com/OctoPrint/OctoPrint-FirmwareUpdater/blob/master/README.md"&gt;Firmware Updater&lt;/a&gt;
+能夠遠端更新印表機 Firmware、
+&lt;a class="reference external" href="https://github.com/jneilliii/OctoPrint-BedLevelVisualizer"&gt;Bed Visualizer&lt;/a&gt;
+能夠看到 Bed Leveling 的狀態等，實在好用，建議有 3D 印表機但還沒裝 OctoPrint 的一定要試一下。&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="section" id="id4"&gt;
 &lt;h2&gt;印列成品&lt;/h2&gt;
 &lt;p&gt;這邊放一些我自己設計的小東西。&lt;/p&gt;
-&lt;div class="section" id="id3"&gt;
+&lt;div class="section" id="id5"&gt;
 &lt;h3&gt;筆電立架&lt;/h3&gt;
 &lt;p&gt;我的螢幕、鍵盤、滑鼠都是外接的，所以筆電其實沒有必要打開。為了節省空間，我想要把筆電立起來藏在螢幕後面，所以設計了一個立架來放。&lt;/p&gt;
 &lt;div class="figure"&gt;
@@ -131,7 +187,7 @@ USB Hub 支架&lt;/div&gt;
 Raspberry Pi 4 Mount（請忽略上面的灰塵）&lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div class="section" id="id4"&gt;
+&lt;div class="section" id="id6"&gt;
 &lt;h3&gt;可調式電源供應器&lt;/h3&gt;
 &lt;p&gt;自己有時候會玩一些微控制器等等的東西，這時候就需要一台可調式電源供應器（Bench Power Supply）啦。買了一些 DIY 零件後自己設計個外殼把它們裝起來。&lt;/p&gt;
 &lt;div class="figure"&gt;
